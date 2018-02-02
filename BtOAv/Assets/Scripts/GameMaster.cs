@@ -10,7 +10,6 @@ public class GameMaster : MonoBehaviour {
     public Hand hand;
     public SelectorController selector;
     public BoardDropzoneController board;
-    public CardBin bin;
     [Space(5)]
 
     [Header("Opponent")]
@@ -21,7 +20,7 @@ public class GameMaster : MonoBehaviour {
     [Space(5)]
 
     public GameObject cardPrefab;
-
+    
     public float actionDelay = 0.5f;
     public bool canMove = true;
     
@@ -149,6 +148,7 @@ public class GameMaster : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.Backspace))
             {
                 board.ClearBoard();
+                boardOppo.ClearBoard();
             }
         }
     }

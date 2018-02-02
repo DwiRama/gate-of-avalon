@@ -17,7 +17,7 @@ public class Hand : MonoBehaviour {
 
     public int cardOpenIndex = 0;
     public bool cardsOpen = false;
-      
+          
     public void Draw10()
     {
         for (int i = 0; i < 10; i++)

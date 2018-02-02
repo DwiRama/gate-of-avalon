@@ -803,6 +803,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardGos: []
+  bin: {fileID: 1349420290}
   totalPoint: 0
   totalPointText: {fileID: 720949333}
   changePoint: 0
@@ -1944,7 +1945,6 @@ MonoBehaviour:
   hand: {fileID: 80373991}
   selector: {fileID: 500370951}
   board: {fileID: 1951548734}
-  bin: {fileID: 890227726}
   deckOppo: {fileID: 1248587606}
   handOppo: {fileID: 1628999446}
   selectorOppo: {fileID: 55903801}
@@ -2419,6 +2419,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardGos: []
+  bin: {fileID: 890227726}
   totalPoint: 0
   totalPointText: {fileID: 1925932526}
   changePoint: 0

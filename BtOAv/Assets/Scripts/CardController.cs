@@ -11,6 +11,7 @@ public class CardController : MonoBehaviour {
     public SpriteRenderer cardGFX;
     public SpriteRenderer cardGFXBack;
     public Animator cardAnimator;
+    public AudioSource sfx;
 
     public Vector3 targetPos;
     public float speed = 30;
@@ -20,13 +21,20 @@ public class CardController : MonoBehaviour {
 
     public void FaceUp()
     {
+        PlaySFX();
         cardAnimator.SetBool("Face Up", true);
     }
 
     public void FaceDown()
     {
+        PlaySFX();
         cardAnimator.SetBool("Face Up", false);
     }    
+
+    public void PlaySFX()
+    {
+        sfx.Play();
+    }
 
     void Update()
     {

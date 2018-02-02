@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class BoardDropzoneController : MonoBehaviour {
     public List<GameObject> cardGos;
+
+    public CardBin bin;
+
     public int totalPoint = 0;
     public Text totalPointText;
     
@@ -18,6 +21,7 @@ public class BoardDropzoneController : MonoBehaviour {
     {
         CardController placedCard = cardGos[index].GetComponent<CardController>();
         placedCard.enabled = true;
+        placedCard.PlaySFX();
 
         cardGos[index].transform.SetParent(this.transform);
         //cards[index].transform.localPosition = new Vector3(index * 0.6f, 0, 0);
@@ -82,12 +86,12 @@ public class BoardDropzoneController : MonoBehaviour {
             cardInfo.cardType = card.cardType;
             cardInfo.cardValue = card.cardValue;
 
-            GameMaster.gm.bin.cards.Add(cardInfo);
-            GameMaster.gm.bin.cardGos.Add(cardGos[index]);
+            bin.cards.Add(cardInfo);
+            bin.cardGos.Add(cardGos[index]);
 
             cardGos.RemoveAt(index);
 
-            GameMaster.gm.bin.AddToBin(GameMaster.gm.bin.cards.Count - 1);
+            bin.AddToBin(bin.cards.Count - 1);
         }
     }
 
@@ -96,6 +100,9 @@ public class BoardDropzoneController : MonoBehaviour {
         for (int i = cardGos.Count - 1; i >= 0; i--)
         {
             AddCardToBin(i);
+            totalPoint = 0;
+            currTotalPoint = 0;
+            totalPointText.text = "0";
         }
     }
 
