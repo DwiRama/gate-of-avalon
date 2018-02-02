@@ -17,6 +17,8 @@ public class CardBin : MonoBehaviour {
         cardController.targetPos = Vector3.zero;
         cardController.moving = true;
 
+        cardController.FaceUp();
+
         cardController.cardGFX.sortingLayerName = "Card Board";
         cardController.cardGFXBack.sortingLayerName = "Card Board";
         cardController.cardGFX.sortingOrder = cards.Count - 1;

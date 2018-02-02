@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SelectorController : MonoBehaviour {
-    public Hand hand;
-
     public Transform selectorHome;
 
     public SelectorPosition selectorPos;
@@ -69,7 +67,7 @@ public class SelectorController : MonoBehaviour {
         this.gameObject.SetActive(false);
     }
 
-    public void Next()
+    public void Next(Hand hand)
     {
         if (hand.cards.Count > 0)
         {
@@ -97,7 +95,7 @@ public class SelectorController : MonoBehaviour {
         }
     }
 
-    public void Prev()
+    public void Prev(Hand hand)
     {
         if (hand.cards.Count > 0)
         {

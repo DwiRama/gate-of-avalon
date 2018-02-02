@@ -105,36 +105,15 @@ public class Hand : MonoBehaviour {
             }
             else if (cards[selectedIndex].cardType == CardType.mirror)
             {
-                //Debug.Log("Throw");
-                cardBin.cards.Add(cards[selectedIndex]);
-                cardBin.cardGos.Add(cardGOs[selectedIndex]);
-
-                cards.RemoveAt(selectedIndex);
-                cardGOs.RemoveAt(selectedIndex);
-
-                cardBin.AddToBin(cardBin.cards.Count - 1);
+                ThrowToBin();
             }
             else if (cards[selectedIndex].cardType == CardType.bolt)
             {
-                //Debug.Log("Throw");
-                cardBin.cards.Add(cards[selectedIndex]);
-                cardBin.cardGos.Add(cardGOs[selectedIndex]);
-
-                cards.RemoveAt(selectedIndex);
-                cardGOs.RemoveAt(selectedIndex);
-
-                cardBin.AddToBin(cardBin.cards.Count - 1);
+                ThrowToBin();
             }
             else if (cards[selectedIndex].cardType == CardType.blast)
             {
-                //Debug.Log("Throw");
-                cardBin.cards.Add(cards[selectedIndex]);
-                cardBin.cardGos.Add(cardGOs[selectedIndex]);
-
-                cards.RemoveAt(selectedIndex);
-                cardGOs.RemoveAt(selectedIndex);
-
-                cardBin.AddToBin(cardBin.cards.Count - 1);
+                ThrowToBin();
             }
             
             if (selectedIndex >= cards.Count - 1)
@@ -157,6 +136,32 @@ public class Hand : MonoBehaviour {
         } else
         {
             Debug.Log("No more cards in Hand.");
+        }
+    }
+
+    public void ThrowToBin(bool getThorwn = false)
+    {
+        if (cards.Count > 0)
+        {
+            cardBin.cards.Add(cards[selectedIndex]);
+            cardBin.cardGos.Add(cardGOs[selectedIndex]);
+
+            cards.RemoveAt(selectedIndex);
+            cardGOs.RemoveAt(selectedIndex);
+
+            cardBin.AddToBin(cardBin.cards.Count - 1);
+
+            if (getThorwn)
+            {
+                GameMaster.gm.selector.UnHighLight();
+
+                if (selectedIndex >= cards.Count - 1)
+                {
+                    selectedIndex = cards.Count - 1;
+                }
+                RearrangeCard();
+                GameMaster.gm.selector.SetSelector(GameMaster.gm.selector.selectorHome, SelectorPosition.Deck);
+            }
         }
     }
 

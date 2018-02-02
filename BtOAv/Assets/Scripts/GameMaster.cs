@@ -20,7 +20,8 @@ public class GameMaster : MonoBehaviour {
     [Space(5)]
 
     public GameObject cardPrefab;
-    
+
+    public bool turn = true;
     public float actionDelay = 0.5f;
     public bool canMove = true;
     
@@ -64,12 +65,103 @@ public class GameMaster : MonoBehaviour {
                 hand.OpenCX();
             }
 
+            if (turn)
+            {                
+                if (selector.selectorPos == SelectorPosition.Deck)
+                {
+                    if (Input.GetKeyDown(KeyCode.Return))
+                    {
+                        deck.PlaceCard();
+                        deckOppo.PlaceCard();
+                        if (hand.cards.Count > 0)
+                        {
+                            hand.selectedIndex = 0;
+                            SpriteRenderer currSpRen = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFX;
+                            SpriteRenderer currSpRenBack = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFXBack;
+                            selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
+                            selector.SetSelector(hand.cardPos[0], SelectorPosition.Hand);
+                        }
+                    }
+                }
+                else if (selector.selectorPos == SelectorPosition.Hand)
+                {
+                    if (Input.GetKeyDown(KeyCode.Return))
+                    {
+                        hand.PlaceCard();
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.RightArrow))
+                    {
+                        selector.Next(hand);
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.LeftArrow))
+                    {
+                        selector.Prev(hand);
+                    }
+                }
+                else if (selector.selectorPos == SelectorPosition.Enemy)
+                {
+                    if (Input.GetKeyDown(KeyCode.Return))
+                    {
+                        handOppo.ThrowToBin(true);
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.RightArrow))
+                    {
+                        selector.Next(handOppo);
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.LeftArrow))
+                    {
+                        selector.Prev(handOppo);
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.M) && selector.selectorPos != SelectorPosition.Hand)
+                {
+                    if (hand.cards.Count > 0)
+                    {
+                        hand.selectedIndex = 0;
+                        SpriteRenderer currSpRen = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFX;
+                        SpriteRenderer currSpRenBack = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFXBack;
+                        selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
+                        selector.SetSelector(hand.cardPos[0], SelectorPosition.Hand);
+                    }
+                }
+
+                if (Input.GetKeyDown(KeyCode.B) && selector.selectorPos != SelectorPosition.Deck)
+                {
+                    if (hand.cards.Count > 0)
+                    {
+                        selector.UnHighLight();
+                    }
+                    selector.SetSelector(selector.selectorHome, SelectorPosition.Deck);
+                }
+
+                if (Input.GetKeyDown(KeyCode.N) && selector.selectorPos != SelectorPosition.Enemy)
+                {
+                    if (handOppo.cards.Count > 0)
+                    {
+                        handOppo.selectedIndex = 0;
+                        SpriteRenderer currSpRen = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFX;
+                        SpriteRenderer currSpRenBack = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFXBack;
+                        selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
+                        selector.SetSelector(handOppo.cardPos[0], SelectorPosition.Enemy);
+                    }
+                }
+            } else
+            {
+
+            }
+
             if (Input.GetKeyDown(KeyCode.V))
             {
                 if (hand.cardsOpen)
                 {
                     hand.CloseCX();
-                } else
+                }
+                else
                 {
                     hand.OpenCX();
                 }
@@ -83,61 +175,6 @@ public class GameMaster : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.E))
             {
                 hand.ShuffleHand();
-            }
-
-            if (selector.selectorPos == SelectorPosition.Deck)
-            {
-                if (Input.GetKeyDown(KeyCode.Return))
-                {
-                    deck.PlaceCard();
-                    deckOppo.PlaceCard();
-                    if (hand.cards.Count > 0)
-                    {
-                        hand.selectedIndex = 0;
-                        SpriteRenderer currSpRen = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFX;
-                        SpriteRenderer currSpRenBack = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFXBack;
-                        selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
-                        selector.SetSelector(hand.cardPos[0], SelectorPosition.Hand);
-                    }
-                }
-            }
-            else if (selector.selectorPos == SelectorPosition.Hand)
-            {
-                if (Input.GetKeyDown(KeyCode.Return))
-                {
-                    hand.PlaceCard();
-                }
-
-                if (Input.GetKeyDown(KeyCode.RightArrow))
-                {
-                    selector.Next();
-                }
-
-                if (Input.GetKeyDown(KeyCode.LeftArrow))
-                {
-                    selector.Prev();
-                }
-            }
-
-            if (Input.GetKeyDown(KeyCode.M) && selector.selectorPos != SelectorPosition.Hand)
-            {
-                if (hand.cards.Count > 0)
-                {
-                    hand.selectedIndex = 0;
-                    SpriteRenderer currSpRen = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFX;
-                    SpriteRenderer currSpRenBack = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFXBack;
-                    selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
-                    selector.SetSelector(hand.cardPos[0], SelectorPosition.Hand);
-                }
-            }
-
-            if (Input.GetKeyDown(KeyCode.B) && selector.selectorPos != SelectorPosition.Deck)
-            {
-                if (hand.cards.Count > 0)
-                {
-                    selector.UnHighLight();
-                }
-                selector.SetSelector(selector.selectorHome, SelectorPosition.Deck);
             }
 
             if (Input.GetKeyDown(KeyCode.P))
