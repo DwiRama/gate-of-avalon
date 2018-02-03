@@ -77,7 +77,7 @@ public class Hand : MonoBehaviour {
         cardOpenIndex++;
     }
 
-    public void PlaceCard()
+    public void PlaceCard(bool backToDeck = false)
     {
         if (cards.Count > 0)
         {
@@ -123,22 +123,26 @@ public class Hand : MonoBehaviour {
 
             RearrangeCard();
 
-            if (cards.Count > 0)
+            if (!backToDeck)
             {
-                SpriteRenderer cardGFX = cardGOs[selectedIndex].GetComponent<CardController>().cardGFX;
-                SpriteRenderer cardGFXBack = cardGOs[selectedIndex].GetComponent<CardController>().cardGFXBack;
-                GameMaster.gm.selector.SetSelector(cardPos[selectedIndex]);
-                GameMaster.gm.selector.HighLight(cardGFX, cardGFXBack, selectedIndex, false);
-            } else
-            {
-                GameMaster.gm.selector.RemoveSelector();
+                if (cards.Count > 0)
+                {
+                    SpriteRenderer cardGFX = cardGOs[selectedIndex].GetComponent<CardController>().cardGFX;
+                    SpriteRenderer cardGFXBack = cardGOs[selectedIndex].GetComponent<CardController>().cardGFXBack;
+                    GameMaster.gm.selector.SetSelector(cardPos[selectedIndex]);
+                    GameMaster.gm.selector.HighLight(cardGFX, cardGFXBack, selectedIndex, false);
+                }
+                else
+                {
+                    GameMaster.gm.selector.RemoveSelector();
+                }
             }
         } else
         {
             Debug.Log("No more cards in Hand.");
         }
     }
-
+    
     public void ThrowToBin(bool getThorwn = false)
     {
         if (cards.Count > 0)

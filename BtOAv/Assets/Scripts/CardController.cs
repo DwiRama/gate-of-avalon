@@ -14,7 +14,7 @@ public class CardController : MonoBehaviour {
     public AudioSource sfx;
 
     public Vector3 targetPos;
-    public float speed = 30;
+    public float speed = 10;
     public bool moving = false;
 
     float step;
@@ -40,8 +40,9 @@ public class CardController : MonoBehaviour {
     {
         if (moving)
         {
-            step = speed * Time.deltaTime;
-            transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, step);
+            //step = speed * Time.deltaTime;
+            step = speed * Vector3.Distance(transform.localPosition, targetPos) / 1.5f;
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, step * Time.deltaTime);
 
             if (transform.localPosition == targetPos)
             {

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameMaster : MonoBehaviour {
-    public static GameMaster gm;    
+    public static GameMaster gm;
+    public Turn gameTurn;
 
     [Header("Player")]
     public Deck deck;
@@ -21,12 +22,19 @@ public class GameMaster : MonoBehaviour {
 
     public GameObject cardPrefab;
 
+    public bool checkPoints = false;
+    public bool firstCheck = false;
+
     public bool turn = true;
-    public float actionDelay = 0.5f;
+    public float actionDelay = 1.2f;
     public bool canMove = true;
+
+    public bool roundFinish = false;
     
     float timer;
     bool drawn10 = false;
+
+    bool isCheckingPoint = false;
 
     void Awake()
     {
@@ -35,8 +43,8 @@ public class GameMaster : MonoBehaviour {
 
 	void Start () {
         timer = actionDelay;
-        deck.Shuffle();
-        deckOppo.Shuffle();
+        Draw10();
+        handOppo.SortCards();
     }
 
     void Update()
@@ -53,16 +61,22 @@ public class GameMaster : MonoBehaviour {
             }
         }
 
-        if (!board.changePoint && canMove)
+        if (!board.changePoint && canMove && !roundFinish)
+        {
+
+        }
+
+        if (!board.changePoint && canMove && checkPoints && !isCheckingPoint)
+        {
+            isCheckingPoint = true;
+            CheckPoints(firstCheck);
+        }
+        else if (!board.changePoint && canMove && !checkPoints && !roundFinish)
         {
             if (Input.GetKeyDown(KeyCode.Z) && !drawn10)
             {
-                drawn10 = true;
-
-                hand.Draw10();
-                handOppo.Draw10();
-
-                hand.OpenCX();
+                Draw10();
+                handOppo.SortCards();
             }
 
             if (turn)
@@ -71,16 +85,9 @@ public class GameMaster : MonoBehaviour {
                 {
                     if (Input.GetKeyDown(KeyCode.Return))
                     {
-                        deck.PlaceCard();
-                        deckOppo.PlaceCard();
-                        if (hand.cards.Count > 0)
-                        {
-                            hand.selectedIndex = 0;
-                            SpriteRenderer currSpRen = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFX;
-                            SpriteRenderer currSpRenBack = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFXBack;
-                            selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
-                            selector.SetSelector(hand.cardPos[0], SelectorPosition.Hand);
-                        }
+                        DrawFromDeckToBoard();
+                        firstCheck = true;
+                        checkPoints = true;
                     }
                 }
                 else if (selector.selectorPos == SelectorPosition.Hand)
@@ -88,6 +95,15 @@ public class GameMaster : MonoBehaviour {
                     if (Input.GetKeyDown(KeyCode.Return))
                     {
                         hand.PlaceCard();
+                        if (hand.cards.Count > 0)
+                        {
+                            selector.UnHighLight();
+                        }
+                        selector.SetSelector(selector.selectorHome, SelectorPosition.Deck);
+                        selector.RemoveSelector();
+                        ActionOn();
+                        firstCheck = false;
+                        checkPoints = true;
                     }
 
                     if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -125,8 +141,8 @@ public class GameMaster : MonoBehaviour {
                         hand.selectedIndex = 0;
                         SpriteRenderer currSpRen = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFX;
                         SpriteRenderer currSpRenBack = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFXBack;
-                        selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
                         selector.SetSelector(hand.cardPos[0], SelectorPosition.Hand);
+                        selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
                     }
                 }
 
@@ -146,13 +162,45 @@ public class GameMaster : MonoBehaviour {
                         handOppo.selectedIndex = 0;
                         SpriteRenderer currSpRen = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFX;
                         SpriteRenderer currSpRenBack = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFXBack;
-                        selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
                         selector.SetSelector(handOppo.cardPos[0], SelectorPosition.Enemy);
+                        selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
                     }
                 }
             } else
             {
+                bool found = false;
+                int pointInterval = boardOppo.totalPoint - board.totalPoint;
 
+                for (int i = 0; i < handOppo.cards.Count; i++)
+                {
+                    if (handOppo.cards[i].cardValue + pointInterval > 0)
+                    {
+                        handOppo.selectedIndex = i;
+                        found = true;
+                        break;
+                    } else if (handOppo.cards[i].cardValue + pointInterval >= 0)
+                    {
+                        handOppo.selectedIndex = i;
+                        found = true;
+                        break;
+                    } else if (handOppo.cards[i].cardType ==  CardType.force)
+                    {
+                        handOppo.selectedIndex = i;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found)
+                {
+                    handOppo.PlaceCard(true);
+                    ActionOn();
+                } else
+                {
+                    //Surrender                    
+                }
+                firstCheck = false;
+                checkPoints = true;
             }
 
             if (Input.GetKeyDown(KeyCode.V))
@@ -184,9 +232,11 @@ public class GameMaster : MonoBehaviour {
 
             if (Input.GetKeyDown(KeyCode.Backspace))
             {
-                board.ClearBoard();
-                boardOppo.ClearBoard();
+                ClearBoard();
             }
+        } else
+        {
+
         }
     }
 
@@ -194,6 +244,122 @@ public class GameMaster : MonoBehaviour {
     {
         canMove = false;
         timer = actionDelay;
+    }
+
+    public void Draw10()
+    {
+        deck.Shuffle();
+        deckOppo.Shuffle();
+        drawn10 = true;
+
+        hand.Draw10();
+        handOppo.Draw10();
+
+        hand.OpenCX();
+    }
+
+    public void DrawFromDeckToBoard()
+    {
+        deck.PlaceCard();
+        deckOppo.PlaceCard();
+
+        selector.RemoveSelector();
+
+        ActionOn();
+    }
+
+    public void CheckPoints(bool DrawFromDeck = false)
+    {
+        if (DrawFromDeck)
+        {
+            if (board.totalPoint == boardOppo.totalPoint)
+            {
+                ClearBoard();
+            }
+            else if (board.totalPoint < boardOppo.totalPoint)
+            {
+                gameTurn = Turn.Player;
+                turn = true;
+
+                if (hand.cards.Count > 0)
+                {
+                    hand.selectedIndex = 0;
+                    SpriteRenderer currSpRen = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFX;
+                    SpriteRenderer currSpRenBack = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFXBack;
+                    selector.SetSelector(hand.cardPos[0], SelectorPosition.Hand);
+                    selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
+                }
+            }
+            else
+            {
+                gameTurn = Turn.Opponent;
+                turn = false;
+            }
+        } else
+        {
+            if (gameTurn == Turn.Player)
+            {
+                if (board.totalPoint == boardOppo.totalPoint)
+                {
+                    ClearBoard();
+                    Debug.Log("Clear");
+                }
+                else if (board.totalPoint > boardOppo.totalPoint)
+                {
+                    turn = false;
+                    gameTurn = Turn.Opponent;
+                    //Debug.Log("Oppo Turn");
+                }
+                else
+                {
+                    handOppo.OpenCX();
+                    roundFinish = true;
+                    Debug.Log("You Lose");
+                }
+            } else
+            {
+                if (boardOppo.totalPoint == board.totalPoint)
+                {
+                    turn = true;
+                    gameTurn = Turn.Player;
+                    ClearBoard();
+                    Debug.Log("Clear");
+                }
+                else if (boardOppo.totalPoint > board.totalPoint)
+                {
+                    turn = true;
+                    gameTurn = Turn.Player;
+                    if (hand.cards.Count > 0)
+                    {
+                        hand.selectedIndex = 0;
+                        SpriteRenderer currSpRen = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFX;
+                        SpriteRenderer currSpRenBack = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFXBack;
+                        selector.SetSelector(hand.cardPos[0], SelectorPosition.Hand);
+                        selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
+                    }
+                    //Debug.Log("Player Turn");
+                }
+                else
+                {
+                    handOppo.OpenCX();
+                    roundFinish = true;
+                    Debug.Log("You Won");
+                }
+            }
+        }
+        checkPoints = false;
+        isCheckingPoint = false;
+    }
+
+    public void ClearBoard()
+    {
+        board.ClearBoard();
+        boardOppo.ClearBoard();
+        if (hand.cards.Count > 0)
+        {
+            selector.UnHighLight();
+        }
+        selector.SetSelector(selector.selectorHome, SelectorPosition.Deck);
     }
 
     public void CreateCards(Card cardInfo, Transform startPos, List<GameObject> cardList, Transform cardPos, int sortOrder, bool sortAscend = true, int maxOrder = 0)
@@ -231,4 +397,11 @@ public class GameMaster : MonoBehaviour {
         newCardController.cardSp = cardInfo.cardSp;
         newCardController.cardGFX.sprite = cardInfo.cardSp;
     }
+}
+
+
+public enum Turn
+{
+    Player,
+    Opponent
 }

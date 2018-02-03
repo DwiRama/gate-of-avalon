@@ -256,7 +256,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcf8254039325ca488bbd71a48291b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hand: {fileID: 1628999446}
   selectorHome: {fileID: 1248587607}
   selectorPos: 0
   currSpRen: {fileID: 0}
@@ -805,9 +804,10 @@ MonoBehaviour:
   cardGos: []
   bin: {fileID: 1349420290}
   totalPoint: 0
+  increasePoint: 1
   totalPointText: {fileID: 720949333}
   changePoint: 0
-  increaseDelay: 0.05
+  changeDelay: 0.05
   currTotalPoint: 0
 --- !u!4 &415296196
 Transform:
@@ -942,7 +942,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcf8254039325ca488bbd71a48291b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hand: {fileID: 80373991}
   selectorHome: {fileID: 111881665}
   selectorPos: 0
   currSpRen: {fileID: 0}
@@ -1600,7 +1599,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 890227724}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.81, y: -0.963, z: 0.16308594}
+  m_LocalPosition: {x: 10.01, y: -0.963, z: 0.16308594}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1849,7 +1848,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1349420289}
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: 5.28, y: 3.66, z: 0.16308594}
+  m_LocalPosition: {x: -10.02, y: 1.22, z: 0.16308594}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1941,6 +1940,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c99a1ec767d9540b87d04850029c0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameTurn: 0
   deck: {fileID: 111881664}
   hand: {fileID: 80373991}
   selector: {fileID: 500370951}
@@ -1950,8 +1950,12 @@ MonoBehaviour:
   selectorOppo: {fileID: 55903801}
   boardOppo: {fileID: 415296195}
   cardPrefab: {fileID: 1047033451459000, guid: 2be02b1e4db26d3418bb93216399833c, type: 2}
-  actionDelay: 0.5
+  checkPoints: 0
+  firstCheck: 0
+  turn: 1
+  actionDelay: 1.2
   canMove: 1
+  roundFinish: 0
 --- !u!4 &1430762381
 Transform:
   m_ObjectHideFlags: 0
@@ -2421,9 +2425,10 @@ MonoBehaviour:
   cardGos: []
   bin: {fileID: 890227726}
   totalPoint: 0
+  increasePoint: 1
   totalPointText: {fileID: 1925932526}
   changePoint: 0
-  increaseDelay: 0.05
+  changeDelay: 0.05
   currTotalPoint: 0
 --- !u!1 &2005078057
 GameObject:

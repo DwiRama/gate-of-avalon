@@ -9,18 +9,21 @@ public class BoardDropzoneController : MonoBehaviour {
     public CardBin bin;
 
     public int totalPoint = 0;
+    public bool increasePoint = true;
     public Text totalPointText;
     
     public bool changePoint = false;
-    public float increaseDelay = 0.05f;
+    public float changeDelay = 0.05f;
     public int currTotalPoint = 0;
 
-    float increasePointTimer;
+    float changePointTimer;
 
     public void PlaceCard(int index)
     {
         CardController placedCard = cardGos[index].GetComponent<CardController>();
         placedCard.enabled = true;
+
+        placedCard.FaceUp();
         placedCard.PlaySFX();
 
         cardGos[index].transform.SetParent(this.transform);
@@ -40,6 +43,7 @@ public class BoardDropzoneController : MonoBehaviour {
     {
         CardController placedCard = cardGos[index].GetComponent<CardController>();
         placedCard.enabled = true;
+        placedCard.FaceUp();
 
         cardGos[index].transform.SetParent(this.transform);
         //cards[index].transform.localPosition = new Vector3(index * 0.6f, 0, 0);
@@ -56,7 +60,16 @@ public class BoardDropzoneController : MonoBehaviour {
 
     public void AddCardValue(int value)
     {
+        increasePoint = true;
         totalPoint += value;
+        ChangePoint();
+        //Debug.Log("Total Value: " + totalPoint);
+    }
+
+    public void SubtractCardValue(int value)
+    {
+        increasePoint = false;
+        totalPoint -= value;
         ChangePoint();
         //Debug.Log("Total Value: " + totalPoint);
     }
@@ -70,7 +83,7 @@ public class BoardDropzoneController : MonoBehaviour {
 
     public void ChangePoint()
     {
-        increasePointTimer = increaseDelay;
+        changePointTimer = changeDelay;
         changePoint = true;
     }
 
@@ -91,6 +104,7 @@ public class BoardDropzoneController : MonoBehaviour {
 
             cardGos.RemoveAt(index);
 
+            SubtractCardValue(cardInfo.cardValue);
             bin.AddToBin(bin.cards.Count - 1);
         }
     }
@@ -110,20 +124,36 @@ public class BoardDropzoneController : MonoBehaviour {
     {
         if (changePoint)
         {
-            if (increasePointTimer <= 0)
+            if (changePointTimer <= 0)
             {
-                if (currTotalPoint < totalPoint)
+                if (increasePoint)
                 {
-                    currTotalPoint++;
-                    totalPointText.text = currTotalPoint + "";
-                    increasePointTimer = increaseDelay;
+                    if (currTotalPoint < totalPoint)
+                    {
+                        currTotalPoint++;
+                        totalPointText.text = currTotalPoint + "";
+                        changePointTimer = changeDelay;
+                    }
+                    else
+                    {
+                        changePoint = false;
+                    }
                 } else
                 {
-                    changePoint = false;
+                    if (currTotalPoint > totalPoint)
+                    {
+                        currTotalPoint--;
+                        totalPointText.text = currTotalPoint + "";
+                        changePointTimer = changeDelay;
+                    }
+                    else
+                    {
+                        changePoint = false;
+                    }
                 }
             } else
             {
-                increasePointTimer -= Time.deltaTime;
+                changePointTimer -= Time.deltaTime;
             }
         }
     }
