@@ -7,6 +7,7 @@ public class BoardDropzoneController : MonoBehaviour {
     public List<GameObject> cardGos;
 
     public CardBin bin;
+    public CardController currBoltCard = null;
 
     public int totalPoint = 0;
     public bool increasePoint = true;
@@ -87,7 +88,7 @@ public class BoardDropzoneController : MonoBehaviour {
         changePoint = true;
     }
 
-    public void AddCardToBin(int index)
+    public void AddCardToBin(int index, bool decreaseValue = true)
     {
         if (cardGos.Count > 0)
         {
@@ -104,7 +105,11 @@ public class BoardDropzoneController : MonoBehaviour {
 
             cardGos.RemoveAt(index);
 
-            SubtractCardValue(cardInfo.cardValue);
+            if (decreaseValue)
+            {
+                SubtractCardValue(cardInfo.cardValue);
+            }
+
             bin.AddToBin(bin.cards.Count - 1);
         }
     }
@@ -136,6 +141,7 @@ public class BoardDropzoneController : MonoBehaviour {
                     }
                     else
                     {
+                        currTotalPoint = totalPoint;
                         changePoint = false;
                     }
                 } else
@@ -148,6 +154,7 @@ public class BoardDropzoneController : MonoBehaviour {
                     }
                     else
                     {
+                        currTotalPoint = totalPoint;
                         changePoint = false;
                     }
                 }

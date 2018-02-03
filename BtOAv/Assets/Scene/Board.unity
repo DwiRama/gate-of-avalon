@@ -366,6 +366,8 @@ MonoBehaviour:
   deck: {fileID: 111881664}
   dropZone: {fileID: 1951548734}
   cardBin: {fileID: 890227726}
+  handOppo: {fileID: 1628999446}
+  dropZoneOppo: {fileID: 415296195}
   cards: []
   cardGOs: []
   cardPos:
@@ -464,7 +466,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CM: {fileID: 970983280}
-  cardIds: 00000000000000000000000001000000010000000100000002000000020000000200000002000000030000000300000003000000040000000400000004000000050000000500000006000000060000006500000065000000660000006700000068000000
+  cardIds: 00000000000000000100000001000000010000000200000002000000020000000200000003000000030000000300000003000000040000000400000004000000050000000500000006000000060000006500000065000000660000006700000068000000
   dropZone: {fileID: 1951548734}
   deckSpRen: {fileID: 145154723}
   fullDeckSp: {fileID: 21300000, guid: 48a719af9d21e80498341d42e2642aab, type: 3}
@@ -803,6 +805,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardGos: []
   bin: {fileID: 1349420290}
+  currBoltCard: {fileID: 0}
   totalPoint: 0
   increasePoint: 1
   totalPointText: {fileID: 720949333}
@@ -1950,12 +1953,14 @@ MonoBehaviour:
   selectorOppo: {fileID: 55903801}
   boardOppo: {fileID: 415296195}
   cardPrefab: {fileID: 1047033451459000, guid: 2be02b1e4db26d3418bb93216399833c, type: 2}
+  currBolted: {fileID: 0}
   checkPoints: 0
   firstCheck: 0
   turn: 1
   actionDelay: 1.2
   canMove: 1
   roundFinish: 0
+  stop: 0
 --- !u!4 &1430762381
 Transform:
   m_ObjectHideFlags: 0
@@ -2155,6 +2160,8 @@ MonoBehaviour:
   deck: {fileID: 1248587606}
   dropZone: {fileID: 415296195}
   cardBin: {fileID: 1349420290}
+  handOppo: {fileID: 80373991}
+  dropZoneOppo: {fileID: 1951548734}
   cards: []
   cardGOs: []
   cardPos:
@@ -2424,6 +2431,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardGos: []
   bin: {fileID: 890227726}
+  currBoltCard: {fileID: 0}
   totalPoint: 0
   increasePoint: 1
   totalPointText: {fileID: 1925932526}

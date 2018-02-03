@@ -7,6 +7,9 @@ public class Hand : MonoBehaviour {
     public BoardDropzoneController dropZone;
     public CardBin cardBin;
 
+    public Hand handOppo;
+    public BoardDropzoneController dropZoneOppo;
+
     public List<Card> cards;
 
     public List<GameObject> cardGOs;
@@ -83,6 +86,13 @@ public class Hand : MonoBehaviour {
         {
             GameMaster.gm.selector.UnHighLight();
 
+            if (GameMaster.gm.currBolted == dropZone)
+            {
+                dropZone.AddCardToBin(dropZone.cardGos.Count - 1, false);
+                dropZone.currBoltCard = null;
+                GameMaster.gm.currBolted = null;
+            }
+
             if (cards[selectedIndex].cardType == CardType.normal)
             {
                 //Debug.Log("Put");
@@ -90,7 +100,7 @@ public class Hand : MonoBehaviour {
 
                 cards.RemoveAt(selectedIndex);
                 cardGOs.RemoveAt(selectedIndex);
-
+                
                 dropZone.PlaceCard(dropZone.cardGos.Count - 1);
             }
             else if (cards[selectedIndex].cardType == CardType.force)
@@ -109,6 +119,13 @@ public class Hand : MonoBehaviour {
             }
             else if (cards[selectedIndex].cardType == CardType.bolt)
             {
+                CardController placedCard = dropZoneOppo.cardGos[dropZoneOppo.cardGos.Count - 1].GetComponent<CardController>();
+
+                placedCard.FaceDown();
+                dropZoneOppo.currBoltCard = placedCard;
+                GameMaster.gm.currBolted = dropZoneOppo;
+
+                dropZoneOppo.SubtractCardValue(placedCard.cardValue);
                 ThrowToBin();
             }
             else if (cards[selectedIndex].cardType == CardType.blast)
