@@ -22,7 +22,15 @@ public class GameMaster : MonoBehaviour {
 
     public GameObject cardPrefab;
     public BoardDropzoneController currBolted = null;
-    
+
+    public bool firstFlip = false;
+    public bool faceUp = true;
+    public bool arrange = false;
+    public bool sort = false;
+
+    public bool isFliping = false;
+    public bool isArranging = false;
+
     public bool checkPoints = false;
     public bool firstCheck = false;
 
@@ -47,13 +55,51 @@ public class GameMaster : MonoBehaviour {
 	void Start () {
         timer = actionDelay;
         Draw10();
-        handOppo.SortCards();
+        //handOppo.SortCards();
+        sort = true;
+        Invoke("FlipCard", 1);
+    }
+    
+    public void SortHand()
+    {
+        hand.SortCards();
+    }
+
+    public void Shuffle()
+    {
+        hand.ShuffleHand();
+    }
+
+    public void FlipCard()
+    {
+        if (!firstFlip)
+        {
+            firstFlip = true;
+        }
+
+        if (faceUp)
+        {
+            hand.CloseCX();
+        } else
+        {
+            hand.OpenCX();
+        }
+
+        faceUp = !faceUp;
+        isFliping = true;
+        arrange = true;
+        ActionOn(1.5f);
     }
 
     void Update()
     {
         if (!stop)
         {
+            if (!firstFlip)
+            {
+                return;
+            }
+
             if (!canMove)
             {
                 if (timer > 0)
@@ -63,153 +109,140 @@ public class GameMaster : MonoBehaviour {
                 else
                 {
                     canMove = true;
-                }
-            }
-
-            if (!board.changePoint && !boardOppo.changePoint && canMove && !roundFinish)
-            {
-
-            }
-
-            if (!board.changePoint && !boardOppo.changePoint && canMove && checkPoints && !isCheckingPoint)
-            {
-                isCheckingPoint = true;
-                CheckPoints(firstCheck);
-            }
-            else if (!board.changePoint && !boardOppo.changePoint && canMove && !checkPoints && !roundFinish)
-            {
-                if (Input.GetKeyDown(KeyCode.Z) && !drawn10)
-                {
-                    Draw10();
-                    handOppo.SortCards();
-                }
-
-                if (turn)
-                {
-                    if (selector.selectorPos == SelectorPosition.Deck)
+                    if (isFliping)
                     {
-                        if (Input.GetKeyDown(KeyCode.Return))
-                        {
-                            DrawFromDeckToBoard();
-                            firstCheck = true;
-                            checkPoints = true;
-                        }
+                        isFliping = false;
                     }
-                    else if (selector.selectorPos == SelectorPosition.Hand)
+                }
+            }
+
+            if (arrange && !isFliping)
+            {
+                if (sort)
+                {
+                    SortHand();
+                } else
+                {
+                    Shuffle();
+                }
+                FlipCard();
+                arrange = false;
+            }
+
+            if (!isCheckingPoint && !isArranging && !isFliping && canMove)
+            {
+                if (!board.changePoint && !boardOppo.changePoint && checkPoints)
+                {
+                    isCheckingPoint = true;
+                    CheckPoints(firstCheck);
+                }
+                else if (!board.changePoint && !boardOppo.changePoint && !checkPoints && !roundFinish)
+                {
+                    if (Input.GetKeyDown(KeyCode.Z) && !drawn10)
                     {
-                        if (Input.GetKeyDown(KeyCode.Return))
+                        Draw10();
+                        handOppo.SortCards();
+                    }
+
+                    if (turn)
+                    {
+                        if (selector.selectorPos == SelectorPosition.Deck)
                         {
-                            hand.PlaceCard();
+                            if (Input.GetKeyDown(KeyCode.Return))
+                            {
+                                DrawFromDeckToBoard();
+                                firstCheck = true;
+                                checkPoints = true;
+                            }
+                        }
+                        else if (selector.selectorPos == SelectorPosition.Hand)
+                        {
+                            if (Input.GetKeyDown(KeyCode.Return))
+                            {
+                                hand.PlaceCard();
+                                if (hand.cards.Count > 0)
+                                {
+                                    selector.UnHighLight();
+                                }
+                                selector.SetSelector(selector.selectorHome, SelectorPosition.Deck);
+                                selector.RemoveSelector();
+                                ActionOn(actionDelay);
+                                firstCheck = false;
+                                checkPoints = true;
+                            }
+
+                            if (Input.GetKeyDown(KeyCode.RightArrow))
+                            {
+                                selector.Next(hand);
+                            }
+
+                            if (Input.GetKeyDown(KeyCode.LeftArrow))
+                            {
+                                selector.Prev(hand);
+                            }
+                        }
+                        else if (selector.selectorPos == SelectorPosition.Enemy)
+                        {
+                            if (Input.GetKeyDown(KeyCode.Return))
+                            {
+                                handOppo.ThrowToBin(true);
+                            }
+
+                            if (Input.GetKeyDown(KeyCode.RightArrow))
+                            {
+                                selector.Next(handOppo);
+                            }
+
+                            if (Input.GetKeyDown(KeyCode.LeftArrow))
+                            {
+                                selector.Prev(handOppo);
+                            }
+                        }
+
+                        if (Input.GetKeyDown(KeyCode.M) && selector.selectorPos != SelectorPosition.Hand)
+                        {
+                            if (hand.cards.Count > 0)
+                            {
+                                hand.selectedIndex = 0;
+                                SpriteRenderer currSpRen = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFX;
+                                SpriteRenderer currSpRenBack = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFXBack;
+                                selector.SetSelector(hand.cardPos[0], SelectorPosition.Hand);
+                                selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
+                            }
+                        }
+
+                        if (Input.GetKeyDown(KeyCode.B) && selector.selectorPos != SelectorPosition.Deck)
+                        {
                             if (hand.cards.Count > 0)
                             {
                                 selector.UnHighLight();
                             }
                             selector.SetSelector(selector.selectorHome, SelectorPosition.Deck);
-                            selector.RemoveSelector();
-                            ActionOn();
-                            firstCheck = false;
-                            checkPoints = true;
                         }
 
-                        if (Input.GetKeyDown(KeyCode.RightArrow))
+                        if (Input.GetKeyDown(KeyCode.N) && selector.selectorPos != SelectorPosition.Enemy)
                         {
-                            selector.Next(hand);
-                        }
-
-                        if (Input.GetKeyDown(KeyCode.LeftArrow))
-                        {
-                            selector.Prev(hand);
-                        }
-                    }
-                    else if (selector.selectorPos == SelectorPosition.Enemy)
-                    {
-                        if (Input.GetKeyDown(KeyCode.Return))
-                        {
-                            handOppo.ThrowToBin(true);
-                        }
-
-                        if (Input.GetKeyDown(KeyCode.RightArrow))
-                        {
-                            selector.Next(handOppo);
-                        }
-
-                        if (Input.GetKeyDown(KeyCode.LeftArrow))
-                        {
-                            selector.Prev(handOppo);
-                        }
-                    }
-
-                    if (Input.GetKeyDown(KeyCode.M) && selector.selectorPos != SelectorPosition.Hand)
-                    {
-                        if (hand.cards.Count > 0)
-                        {
-                            hand.selectedIndex = 0;
-                            SpriteRenderer currSpRen = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFX;
-                            SpriteRenderer currSpRenBack = hand.cardGOs[hand.selectedIndex].GetComponent<CardController>().cardGFXBack;
-                            selector.SetSelector(hand.cardPos[0], SelectorPosition.Hand);
-                            selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
-                        }
-                    }
-
-                    if (Input.GetKeyDown(KeyCode.B) && selector.selectorPos != SelectorPosition.Deck)
-                    {
-                        if (hand.cards.Count > 0)
-                        {
-                            selector.UnHighLight();
-                        }
-                        selector.SetSelector(selector.selectorHome, SelectorPosition.Deck);
-                    }
-
-                    if (Input.GetKeyDown(KeyCode.N) && selector.selectorPos != SelectorPosition.Enemy)
-                    {
-                        if (handOppo.cards.Count > 0)
-                        {
-                            handOppo.selectedIndex = 0;
-                            SpriteRenderer currSpRen = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFX;
-                            SpriteRenderer currSpRenBack = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFXBack;
-                            selector.SetSelector(handOppo.cardPos[0], SelectorPosition.Enemy);
-                            selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
-                        }
-                    }
-                }
-                else
-                {
-                    bool found = false;
-                    int pointInterval = boardOppo.totalPoint - board.totalPoint;
-
-                    if (!found)
-                    {
-                        for (int i = 0; i < handOppo.cards.Count; i++)
-                        {
-                            if (handOppo.cards[i].cardValue + pointInterval > 0)
+                            if (handOppo.cards.Count > 0)
                             {
-                                handOppo.selectedIndex = i;
-                                found = true;
-                                break;
+                                handOppo.selectedIndex = 0;
+                                SpriteRenderer currSpRen = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFX;
+                                SpriteRenderer currSpRenBack = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFXBack;
+                                selector.SetSelector(handOppo.cardPos[0], SelectorPosition.Enemy);
+                                selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
                             }
                         }
                     }
-
-                    if (!found)
+                    else
                     {
-                        for (int i = 0; i < handOppo.cards.Count; i++)
-                        {
-                            if (handOppo.cards[i].cardValue + pointInterval >= 0)
-                            {
-                                handOppo.selectedIndex = i;
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
+                        bool found = false;
+                        int pointInterval = boardOppo.totalPoint - board.totalPoint;
 
-                    if (!found)
-                    {
-                        if (boardOppo.totalPoint * 2 > board.totalPoint)
+                        //Find Higher Point
+                        if (!found)
                         {
                             for (int i = 0; i < handOppo.cards.Count; i++)
                             {
-                                if (handOppo.cards[i].cardType == CardType.force)
+                                if (handOppo.cards[i].cardValue + pointInterval > 0)
                                 {
                                     handOppo.selectedIndex = i;
                                     found = true;
@@ -217,69 +250,101 @@ public class GameMaster : MonoBehaviour {
                                 }
                             }
                         }
+
+                        //Find Same Point
+                        if (!found)
+                        {
+                            for (int i = 0; i < handOppo.cards.Count; i++)
+                            {
+                                if (handOppo.cards[i].cardValue + pointInterval >= 0)
+                                {
+                                    handOppo.selectedIndex = i;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        //Find Force Card
+                        if (!found)
+                        {
+                            if (boardOppo.totalPoint * 2 > board.totalPoint)
+                            {
+                                for (int i = 0; i < handOppo.cards.Count; i++)
+                                {
+                                    if (handOppo.cards[i].cardType == CardType.force)
+                                    {
+                                        handOppo.selectedIndex = i;
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        //Find Bolt Card
+                        if (!found)
+                        {
+                            for (int i = 0; i < handOppo.cards.Count; i++)
+                            {
+                                if (handOppo.cards[i].cardType == CardType.bolt)
+                                {
+                                    handOppo.selectedIndex = i;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (found)
+                        {
+                            handOppo.PlaceCard(true);
+                            ActionOn(actionDelay);
+                        }
+                        else
+                        {
+                            //Surrender                    
+                        }
+                        firstCheck = false;
+                        checkPoints = true;
                     }
 
-                    if (!found)
+                    if (Input.GetKeyDown(KeyCode.V))
                     {
-                        for (int i = 0; i < handOppo.cards.Count; i++)
+                        if (hand.cardsOpen)
                         {
-                            if (handOppo.cards[i].cardType == CardType.bolt)
-                            {
-                                handOppo.selectedIndex = i;
-                                found = true;
-                                break;
-                            }
+                            hand.CloseCX();
+                        }
+                        else
+                        {
+                            hand.OpenCX();
                         }
                     }
 
-                    if (found)
+                    if (Input.GetKeyDown(KeyCode.Q))
                     {
-                        handOppo.PlaceCard(true);
-                        ActionOn();
+                        hand.SortCards();
                     }
-                    else
-                    {
-                        //Surrender                    
-                    }
-                    firstCheck = false;
-                    checkPoints = true;
-                }
 
-                if (Input.GetKeyDown(KeyCode.V))
-                {
-                    if (hand.cardsOpen)
+                    if (Input.GetKeyDown(KeyCode.E))
                     {
-                        hand.CloseCX();
+                        hand.ShuffleHand();
                     }
-                    else
+
+                    if (Input.GetKeyDown(KeyCode.P))
                     {
-                        hand.OpenCX();
+                        board.AddCardToBin(board.cardGos.Count - 1);
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.Backspace))
+                    {
+                        ClearBoard();
                     }
                 }
-
-                if (Input.GetKeyDown(KeyCode.Q))
+                else
                 {
-                    hand.SortCards();
-                }
 
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    hand.ShuffleHand();
                 }
-
-                if (Input.GetKeyDown(KeyCode.P))
-                {
-                    board.AddCardToBin(board.cardGos.Count - 1);
-                }
-
-                if (Input.GetKeyDown(KeyCode.Backspace))
-                {
-                    ClearBoard();
-                }
-            }
-            else
-            {
-
             }
         }
 
@@ -289,7 +354,7 @@ public class GameMaster : MonoBehaviour {
         }
     }
 
-    public void ActionOn()
+    public void ActionOn(float delay)
     {
         canMove = false;
         timer = actionDelay;
@@ -314,7 +379,7 @@ public class GameMaster : MonoBehaviour {
 
         selector.RemoveSelector();
 
-        ActionOn();
+        ActionOn(actionDelay);
     }
 
     public void CheckPoints(bool DrawFromDeck = false)
