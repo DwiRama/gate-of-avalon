@@ -15,6 +15,8 @@ public class Hand : MonoBehaviour {
     public List<GameObject> cardGOs;
     public Transform[] cardPos;
 
+    public AudioSource drawAudioSource;
+
     public bool sortAscend = true;
     public int selectedIndex = 0;
 
@@ -28,16 +30,25 @@ public class Hand : MonoBehaviour {
             cards.Add(deck.Draw());
         }
 
-        for (int i = 0; i < 10; i++)
+        StartCoroutine(DrawingCard(0, 0.3f));
+    }
+
+    IEnumerator DrawingCard(int index, float wait)
+    {
+        GameMaster.gm.isDrawing = true;
+        yield return new WaitForSeconds(wait);
+        if (index < cards.Count)
         {
-            if (sortAscend)
-            {
-                GameMaster.gm.CreateCards(cards[i], this.deck.transform, cardGOs, cardPos[i], i);
-            } else
-            {
-                GameMaster.gm.CreateCards(cards[i], this.deck.transform, cardGOs, cardPos[i], i, false, cards.Count - 1);
-            }
-        }        
+            drawAudioSource.Play();
+            GameMaster.gm.CreateCards(cards[index], this.deck.transform, cardGOs, cardPos[index], index, sortAscend, cards.Count - 1);
+            StartCoroutine(DrawingCard(index+1, wait));
+        }
+        else
+        {
+            GameMaster.gm.isDrawing = false;
+            GameMaster.gm.sort = true;
+            yield return null;
+        }
     }
 
     public void OpenCX()
@@ -102,6 +113,13 @@ public class Hand : MonoBehaviour {
                 cardGOs.RemoveAt(selectedIndex);
                 
                 dropZone.PlaceCard(dropZone.cardGos.Count - 1);
+                
+                if (selectedIndex >= cards.Count - 1)
+                {
+                    selectedIndex = cards.Count - 1;
+                }
+
+                RearrangeCard();
             }
             else if (cards[selectedIndex].cardType == CardType.force)
             {
@@ -119,27 +137,13 @@ public class Hand : MonoBehaviour {
             }
             else if (cards[selectedIndex].cardType == CardType.bolt)
             {
-                CardController placedCard = dropZoneOppo.cardGos[dropZoneOppo.cardGos.Count - 1].GetComponent<CardController>();
-
-                placedCard.FaceDown();
-                dropZoneOppo.currBoltCard = placedCard;
-                GameMaster.gm.currBolted = dropZoneOppo;
-
-                dropZoneOppo.SubtractCardValue(placedCard.cardValue);
-                ThrowToBin();
+                StartCoroutine(ShowCardAnimation(1f, true, cards[selectedIndex].cardType));
             }
             else if (cards[selectedIndex].cardType == CardType.blast)
             {
                 ThrowToBin();
             }
             
-            if (selectedIndex >= cards.Count - 1)
-            {
-                selectedIndex = cards.Count - 1;
-            }
-
-            RearrangeCard();
-
             if (!backToDeck)
             {
                 if (cards.Count > 0)
@@ -158,6 +162,56 @@ public class Hand : MonoBehaviour {
         {
             Debug.Log("No more cards in Hand.");
         }
+    }
+    
+    IEnumerator ShowCardAnimation(float wait, bool throwToBin, CardType cardType)
+    {
+        GameMaster.gm.isShowEffect = true;
+        CardController cc = cardGOs[selectedIndex].GetComponent<CardController>();
+
+        yield return new WaitForSeconds(0.05f);
+
+        cc.cardGFX.sortingLayerName = "Show";
+        cc.cardGFX.sortingOrder = 1;
+        cc.ShowCard();
+
+        yield return new WaitForSeconds(0.35f);
+        
+        switch (cardType)
+        {
+            case CardType.bolt:
+
+                //Showing Effect...//
+                Debug.Log("Show Effects");
+
+                yield return new WaitForSeconds(wait);
+
+                CardController placedCard = dropZoneOppo.cardGos[dropZoneOppo.cardGos.Count - 1].GetComponent<CardController>();
+
+                placedCard.FaceDown();
+                dropZoneOppo.currBoltCard = placedCard;
+                GameMaster.gm.currBolted = dropZoneOppo;
+
+                dropZoneOppo.SubtractCardValue(placedCard.cardValue);
+                break;
+        }
+        
+        yield return new WaitForSeconds(0.9f);
+
+        if (throwToBin)
+        {            
+            ThrowToBin();
+        }
+        
+        if (selectedIndex >= cards.Count - 1)
+        {
+            selectedIndex = cards.Count - 1;
+        }
+
+        RearrangeCard();
+
+        GameMaster.gm.isShowEffect = false;
+        yield return null;
     }
     
     public void ThrowToBin(bool getThorwn = false)

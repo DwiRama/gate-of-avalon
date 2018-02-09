@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameMaster : MonoBehaviour {
     public static GameMaster gm;
@@ -23,13 +24,19 @@ public class GameMaster : MonoBehaviour {
     public GameObject cardPrefab;
     public BoardDropzoneController currBolted = null;
 
+    public Image message;
+    public Sprite messageWin;
+    public Sprite messageLose;
+
     public bool firstFlip = false;
     public bool faceUp = true;
     public bool arrange = false;
     public bool sort = false;
 
+    public bool isDrawing = false;
     public bool isFliping = false;
     public bool isArranging = false;
+    public bool isShowEffect = false;
 
     public bool checkPoints = false;
     public bool firstCheck = false;
@@ -38,6 +45,7 @@ public class GameMaster : MonoBehaviour {
     public float actionDelay = 1.2f;
     public bool canMove = true;
 
+    public bool roundStart = true;
     public bool roundFinish = false;
     
     float timer;
@@ -52,12 +60,12 @@ public class GameMaster : MonoBehaviour {
         gm = this;
     }
 
-	void Start () {
+	void Start ()
+    {
         timer = actionDelay;
-        Draw10();
+        ActionOn(0.5f);
+        roundStart = true;
         //handOppo.SortCards();
-        sort = true;
-        Invoke("FlipCard", 1);
     }
     
     public void SortHand()
@@ -95,11 +103,6 @@ public class GameMaster : MonoBehaviour {
     {
         if (!stop)
         {
-            if (!firstFlip)
-            {
-                return;
-            }
-
             if (!canMove)
             {
                 if (timer > 0)
@@ -116,12 +119,26 @@ public class GameMaster : MonoBehaviour {
                 }
             }
 
-            if (arrange && !isFliping)
+            if (canMove && roundStart)
+            {
+                Draw10();
+                Invoke("FlipCard", 4);
+                Invoke("FlipCard", 5);
+                roundStart = false;
+            }
+
+            if (!firstFlip)
+            {
+                return;
+            }
+
+            if (arrange && !isFliping && !faceUp)
             {
                 if (sort)
                 {
                     SortHand();
-                } else
+                }
+                else
                 {
                     Shuffle();
                 }
@@ -129,7 +146,7 @@ public class GameMaster : MonoBehaviour {
                 arrange = false;
             }
 
-            if (!isCheckingPoint && !isArranging && !isFliping && canMove)
+            if (!isCheckingPoint && !isArranging && !isFliping && !isDrawing && !isShowEffect && canMove)
             {
                 if (!board.changePoint && !boardOppo.changePoint && checkPoints)
                 {
@@ -234,6 +251,7 @@ public class GameMaster : MonoBehaviour {
                     }
                     else
                     {
+                        //Opponent Choice
                         bool found = false;
                         int pointInterval = boardOppo.totalPoint - board.totalPoint;
 
@@ -428,7 +446,10 @@ public class GameMaster : MonoBehaviour {
                 {
                     handOppo.OpenCX();
                     roundFinish = true;
-                    Debug.Log("You Lose");
+
+                    message.sprite = messageLose;
+                    message.enabled = true;
+                    //Debug.Log("You Lose");
                 }
             } else
             {
@@ -457,7 +478,10 @@ public class GameMaster : MonoBehaviour {
                 {
                     handOppo.OpenCX();
                     roundFinish = true;
-                    Debug.Log("You Won");
+
+                    message.sprite = messageWin;
+                    message.enabled = true;
+                    //Debug.Log("You Won");
                 }
             }
         }

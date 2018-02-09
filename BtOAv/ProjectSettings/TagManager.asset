@@ -53,6 +53,9 @@ TagManager:
   - name: Card Board
     uniqueID: 1194364535
     locked: 0
+  - name: Show
+    uniqueID: 3817907011
+    locked: 0
   - name: Selector
     uniqueID: 296712259
     locked: 0

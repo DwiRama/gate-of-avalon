@@ -31,6 +31,12 @@ public class CardController : MonoBehaviour {
         cardAnimator.SetBool("Face Up", false);
     }    
 
+    public void ShowCard()
+    {
+        cardAnimator.SetTrigger("Show");
+        cardAnimator.SetBool("Face Up", true);
+    }
+
     public void PlaySFX()
     {
         sfx.Play();
