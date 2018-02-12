@@ -130,6 +130,13 @@ public class Hand : MonoBehaviour {
                 cardGOs.RemoveAt(selectedIndex);
 
                 dropZone.PlaceCard(dropZone.cardGos.Count - 1, 2);
+
+                if (selectedIndex >= cards.Count - 1)
+                {
+                    selectedIndex = cards.Count - 1;
+                }
+
+                RearrangeCard();
             }
             else if (cards[selectedIndex].cardType == CardType.mirror)
             {
@@ -137,11 +144,11 @@ public class Hand : MonoBehaviour {
             }
             else if (cards[selectedIndex].cardType == CardType.bolt)
             {
-                StartCoroutine(ShowCardAnimation(1f, true, cards[selectedIndex].cardType));
+                StartCoroutine(ShowCardAnimation(1f, true, CardType.bolt));
             }
             else if (cards[selectedIndex].cardType == CardType.blast)
             {
-                ThrowToBin();
+                StartCoroutine(ShowCardAnimation(1f, true, CardType.blast));
             }
             
             if (!backToDeck)
@@ -191,12 +198,27 @@ public class Hand : MonoBehaviour {
                 placedCard.FaceDown();
                 dropZoneOppo.currBoltCard = placedCard;
                 GameMaster.gm.currBolted = dropZoneOppo;
+                
+                dropZoneOppo.SubtractCardValue(dropZoneOppo.lastAddValue);
+                break;
+            case CardType.blast:
+                //Showing Effect...//
+                Debug.Log("Show Effects");
 
-                dropZoneOppo.SubtractCardValue(placedCard.cardValue);
+                yield return new WaitForSeconds(wait);
+
+                if (handOppo.cards.Count > 0)
+                {
+                    handOppo.selectedIndex = 0;
+                    SpriteRenderer currSpRen = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFX;
+                    SpriteRenderer currSpRenBack = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFXBack;
+                    GameMaster.gm.selector.SetSelector(handOppo.cardPos[0], SelectorPosition.Enemy);
+                    GameMaster.gm.selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
+                }
                 break;
         }
         
-        yield return new WaitForSeconds(0.9f);
+        yield return new WaitForSeconds(1.2f);
 
         if (throwToBin)
         {            
@@ -229,13 +251,19 @@ public class Hand : MonoBehaviour {
             if (getThorwn)
             {
                 GameMaster.gm.selector.UnHighLight();
+                GameMaster.gm.selector.RemoveSelector();
 
                 if (selectedIndex >= cards.Count - 1)
                 {
                     selectedIndex = cards.Count - 1;
                 }
                 RearrangeCard();
-                GameMaster.gm.selector.SetSelector(GameMaster.gm.selector.selectorHome, SelectorPosition.Deck);
+
+                selectedIndex = 0;
+                SpriteRenderer currSpRen = cardGOs[selectedIndex].GetComponent<CardController>().cardGFX;
+                SpriteRenderer currSpRenBack = cardGOs[selectedIndex].GetComponent<CardController>().cardGFXBack;
+                GameMaster.gm.selector.SetSelector(handOppo.cardPos[0], SelectorPosition.Hand);
+                GameMaster.gm.selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
             }
         }
     }

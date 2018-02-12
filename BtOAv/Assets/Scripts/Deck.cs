@@ -7,7 +7,7 @@ public class Deck : MonoBehaviour {
     public List<int> cardIds;
 
     public BoardDropzoneController dropZone;
-
+    
     public SpriteRenderer deckSpRen;
     public Sprite fullDeckSp;
     public Sprite lastCardSp;

@@ -27,6 +27,7 @@ public class GameMaster : MonoBehaviour {
     public Image message;
     public Sprite messageWin;
     public Sprite messageLose;
+    public Animator messageAnimator;
 
     public bool firstFlip = false;
     public bool faceUp = true;
@@ -176,16 +177,23 @@ public class GameMaster : MonoBehaviour {
                         {
                             if (Input.GetKeyDown(KeyCode.Return))
                             {
+                                Card currC = hand.cards[hand.selectedIndex];
                                 hand.PlaceCard();
                                 if (hand.cards.Count > 0)
                                 {
                                     selector.UnHighLight();
                                 }
-                                selector.SetSelector(selector.selectorHome, SelectorPosition.Deck);
-                                selector.RemoveSelector();
+                                if (currC.cardType != CardType.blast)
+                                {
+                                    selector.SetSelector(selector.selectorHome, SelectorPosition.Deck);
+                                    selector.RemoveSelector();
+                                    firstCheck = false;
+                                    checkPoints = true;
+                                } else
+                                {
+                                    selector.RemoveSelector();
+                                }
                                 ActionOn(actionDelay);
-                                firstCheck = false;
-                                checkPoints = true;
                             }
 
                             if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -449,6 +457,8 @@ public class GameMaster : MonoBehaviour {
 
                     message.sprite = messageLose;
                     message.enabled = true;
+                    messageAnimator.enabled = true;
+                    messageAnimator.Play("Show", 0, -1f);
                     //Debug.Log("You Lose");
                 }
             } else
@@ -481,6 +491,8 @@ public class GameMaster : MonoBehaviour {
 
                     message.sprite = messageWin;
                     message.enabled = true;
+                    messageAnimator.enabled = true;
+                    messageAnimator.Play("Show", 0, -1f);
                     //Debug.Log("You Won");
                 }
             }

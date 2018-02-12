@@ -548,7 +548,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CM: {fileID: 970983280}
-  cardIds: 00000000000000000100000001000000010000000200000002000000020000000200000003000000030000000300000003000000040000000400000004000000050000000500000006000000060000006500000065000000660000006700000068000000
+  cardIds: 00000000000000000100000001000000010000000200000002000000020000000200000003000000030000000300000004000000040000000400000005000000050000000600000006000000650000006500000065000000660000006700000068000000
   dropZone: {fileID: 1951548734}
   deckSpRen: {fileID: 145154723}
   fullDeckSp: {fileID: 21300000, guid: 48a719af9d21e80498341d42e2642aab, type: 3}
@@ -888,9 +888,11 @@ MonoBehaviour:
   cardGos: []
   bin: {fileID: 1349420290}
   currBoltCard: {fileID: 0}
+  valueType: 0
   totalPoint: 0
   increasePoint: 1
   totalPointText: {fileID: 720949333}
+  lastAddValue: 0
   changePoint: 0
   changeDelay: 0.05
   currTotalPoint: 0
@@ -1819,7 +1821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CM: {fileID: 970983280}
-  cardIds: 00000000000000000000000001000000010000000100000002000000020000000200000002000000030000000300000003000000040000000400000004000000050000000500000006000000060000006500000065000000660000006700000068000000
+  cardIds: 00000000000000000100000001000000020000000200000002000000020000000300000003000000030000000300000003000000040000000400000004000000050000000500000006000000650000006500000065000000660000006700000068000000
   dropZone: {fileID: 415296195}
   deckSpRen: {fileID: 2077081567}
   fullDeckSp: {fileID: 21300000, guid: 48a719af9d21e80498341d42e2642aab, type: 3}
@@ -2040,6 +2042,7 @@ MonoBehaviour:
   message: {fileID: 1733433392}
   messageWin: {fileID: 21300000, guid: 033f92072911d604887f15c6033265ec, type: 3}
   messageLose: {fileID: 21300000, guid: ec8ba070ee499964a8da3cee5e046df4, type: 3}
+  messageAnimator: {fileID: 1733433394}
   firstFlip: 0
   faceUp: 0
   arrange: 0
@@ -2417,6 +2420,7 @@ GameObject:
   - component: {fileID: 1733433391}
   - component: {fileID: 1733433393}
   - component: {fileID: 1733433392}
+  - component: {fileID: 1733433394}
   m_Layer: 5
   m_Name: Message
   m_TagString: Untagged
@@ -2461,7 +2465,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: f1e7d0fb544c7ef4c9308b7f19773faa, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2475,6 +2479,23 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1733433390}
+--- !u!95 &1733433394
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1733433390}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 56386a28f5d290c4eb842e1bebe3b990, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!1 &1762532307
 GameObject:
   m_ObjectHideFlags: 0
@@ -2677,9 +2698,11 @@ MonoBehaviour:
   cardGos: []
   bin: {fileID: 890227726}
   currBoltCard: {fileID: 0}
+  valueType: 0
   totalPoint: 0
   increasePoint: 1
   totalPointText: {fileID: 1925932526}
+  lastAddValue: 0
   changePoint: 0
   changeDelay: 0.05
   currTotalPoint: 0

@@ -9,9 +9,12 @@ public class BoardDropzoneController : MonoBehaviour {
     public CardBin bin;
     public CardController currBoltCard = null;
 
+    public ValueType valueType;
+
     public int totalPoint = 0;
     public bool increasePoint = true;
     public Text totalPointText;
+    public int lastAddValue = 0;
     
     public bool changePoint = false;
     public float changeDelay = 0.05f;
@@ -44,7 +47,9 @@ public class BoardDropzoneController : MonoBehaviour {
     {
         CardController placedCard = cardGos[index].GetComponent<CardController>();
         placedCard.enabled = true;
+
         placedCard.FaceUp();
+        placedCard.PlaySFX();
 
         cardGos[index].transform.SetParent(this.transform);
         //cards[index].transform.localPosition = new Vector3(index * 0.6f, 0, 0);
@@ -61,7 +66,9 @@ public class BoardDropzoneController : MonoBehaviour {
 
     public void AddCardValue(int value)
     {
+        valueType = ValueType.Add;
         increasePoint = true;
+        lastAddValue = value;
         totalPoint += value;
         ChangePoint();
         //Debug.Log("Total Value: " + totalPoint);
@@ -69,7 +76,9 @@ public class BoardDropzoneController : MonoBehaviour {
 
     public void SubtractCardValue(int value)
     {
+        valueType = ValueType.Subtract;
         increasePoint = false;
+        lastAddValue = value;
         totalPoint -= value;
         ChangePoint();
         //Debug.Log("Total Value: " + totalPoint);
@@ -77,7 +86,10 @@ public class BoardDropzoneController : MonoBehaviour {
 
     public void MultipleCardValue(int value)
     {
+        valueType = ValueType.Multiply;
+        increasePoint = true;
         totalPoint *= value;
+        lastAddValue = totalPoint / value;
         ChangePoint();
         //Debug.Log("Total Value: " + totalPoint);
     }
@@ -142,6 +154,7 @@ public class BoardDropzoneController : MonoBehaviour {
                     else
                     {
                         currTotalPoint = totalPoint;
+                        totalPointText.text = currTotalPoint + "";
                         changePoint = false;
                     }
                 } else
@@ -155,6 +168,7 @@ public class BoardDropzoneController : MonoBehaviour {
                     else
                     {
                         currTotalPoint = totalPoint;
+                        totalPointText.text = currTotalPoint + "";
                         changePoint = false;
                     }
                 }
@@ -164,4 +178,11 @@ public class BoardDropzoneController : MonoBehaviour {
             }
         }
     }
+}
+
+public enum ValueType
+{
+    Add,
+    Subtract,
+    Multiply
 }
