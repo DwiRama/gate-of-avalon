@@ -97,14 +97,27 @@ public class Hand : MonoBehaviour {
         {
             GameMaster.gm.selector.UnHighLight();
 
+            bool revive = false;
             if (GameMaster.gm.currBolted == dropZone)
             {
-                dropZone.AddCardToBin(dropZone.cardGos.Count - 1, false);
-                dropZone.currBoltCard = null;
-                GameMaster.gm.currBolted = null;
+                if (cards[selectedIndex].cardId == 0)
+                {
+                    revive = true;
+                    GameMaster.gm.currBolted = null;
+                }
+                else
+                {
+                    dropZone.AddCardToBin(dropZone.cardGos.Count - 1, false);
+                    dropZone.currBoltCard = null;
+                    GameMaster.gm.currBolted = null;
+                }
             }
 
-            if (cards[selectedIndex].cardType == CardType.normal)
+            if (revive)
+            {
+                StartCoroutine(ShowCardAnimation(1f, true, CardType.revive));
+            }
+            else if (cards[selectedIndex].cardType == CardType.normal || cards[selectedIndex].cardId == 0)
             {
                 //Debug.Log("Put");
                 dropZone.cardGos.Add(cardGOs[selectedIndex]);
@@ -183,9 +196,24 @@ public class Hand : MonoBehaviour {
         cc.ShowCard();
 
         yield return new WaitForSeconds(0.35f);
-        
+
+        CardController placedCard = new CardController();
+
         switch (cardType)
         {
+            case CardType.revive:
+                //Showing Effect...//
+                Debug.Log("Show Effects");
+
+                yield return new WaitForSeconds(wait);
+
+                placedCard = dropZone.cardGos[dropZone.cardGos.Count - 1].GetComponent<CardController>();
+
+                placedCard.FaceUp();
+                dropZone.currBoltCard = placedCard;
+
+                dropZone.AddCardValue(dropZone.lastAddValue);
+                break;
             case CardType.bolt:
 
                 //Showing Effect...//
@@ -193,7 +221,7 @@ public class Hand : MonoBehaviour {
 
                 yield return new WaitForSeconds(wait);
 
-                CardController placedCard = dropZoneOppo.cardGos[dropZoneOppo.cardGos.Count - 1].GetComponent<CardController>();
+                placedCard = dropZoneOppo.cardGos[dropZoneOppo.cardGos.Count - 1].GetComponent<CardController>();
 
                 placedCard.FaceDown();
                 dropZoneOppo.currBoltCard = placedCard;
@@ -304,7 +332,7 @@ public class Hand : MonoBehaviour {
         
         for (int i = 0; i < cards.Count; i++)
         {
-            if (cards[i].cardType != CardType.normal)
+            if (cards[i].cardType != CardType.normal || cards[i].cardId != 0)
             {
                 unNormalCards.Add(cards[i]);
             } else
@@ -322,6 +350,19 @@ public class Hand : MonoBehaviour {
                     Card temp = result[j - 1];
                     result[j - 1] = result[j];
                     result[j] = temp;
+                }
+            }
+        }
+
+        for (int i = 0; i < unNormalCards.Count - 1; i++)
+        {
+            for (int j = i + 1; j > 0; j--)
+            {
+                if (unNormalCards[j - 1].cardId > unNormalCards[j].cardId)
+                {
+                    Card temp = unNormalCards[j - 1];
+                    unNormalCards[j - 1] = unNormalCards[j];
+                    unNormalCards[j] = temp;
                 }
             }
         }

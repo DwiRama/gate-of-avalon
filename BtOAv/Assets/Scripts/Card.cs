@@ -16,5 +16,6 @@ public enum CardType
     bolt,
     blast,
     mirror,
-    force
+    force,
+    revive
 }

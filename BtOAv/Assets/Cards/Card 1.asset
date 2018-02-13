@@ -13,5 +13,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardId: 0
   cardValue: 1
-  cardType: 0
+  cardType: 5
   cardSp: {fileID: 21300000, guid: 286bc4d85ea539d4ab35acd7622e3653, type: 3}
