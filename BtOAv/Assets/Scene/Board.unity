@@ -1734,50 +1734,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardData:
-  - cardId: 0
-    cardValue: 1
-    cardType: 0
-    cardSp: {fileID: 21300000, guid: 286bc4d85ea539d4ab35acd7622e3653, type: 3}
-  - cardId: 1
-    cardValue: 2
-    cardType: 0
-    cardSp: {fileID: 21300000, guid: 2c0494e30d86660489e384c2b82e0af1, type: 3}
-  - cardId: 2
-    cardValue: 3
-    cardType: 0
-    cardSp: {fileID: 21300000, guid: a2729a29eb8d5d44d81321f65e70b1b4, type: 3}
-  - cardId: 3
-    cardValue: 4
-    cardType: 0
-    cardSp: {fileID: 21300000, guid: 41d0ff203eafc7f48bcae278a3d7d9a8, type: 3}
-  - cardId: 4
-    cardValue: 5
-    cardType: 0
-    cardSp: {fileID: 21300000, guid: 34fd60070881c8240a6cd0171cbcbb2e, type: 3}
-  - cardId: 5
-    cardValue: 6
-    cardType: 0
-    cardSp: {fileID: 21300000, guid: 377020ffa2bca4b4bb3014493710b13f, type: 3}
-  - cardId: 6
-    cardValue: 7
-    cardType: 0
-    cardSp: {fileID: 21300000, guid: a9d1c59a9e7d17745ae5620ca33b1cf5, type: 3}
-  - cardId: 101
-    cardValue: 1
-    cardType: 1
-    cardSp: {fileID: 21300000, guid: 707144750adfd7b4e9b5b62d27806537, type: 3}
-  - cardId: 102
-    cardValue: 1
-    cardType: 2
-    cardSp: {fileID: 21300000, guid: a0d991e2293b2e649a9fcd88cc7faab1, type: 3}
-  - cardId: 103
-    cardValue: 1
-    cardType: 3
-    cardSp: {fileID: 21300000, guid: cfc511fcb563c7549a28fc0903cc9598, type: 3}
-  - cardId: 104
-    cardValue: 1
-    cardType: 4
-    cardSp: {fileID: 21300000, guid: a591aaff246311f44879f6fc9715b4d8, type: 3}
+  - {fileID: 11400000, guid: e475baacdc14ddb49b1df1d9566e4610, type: 2}
+  - {fileID: 11400000, guid: 2deb46019dc4c4240bbe2c437a722de2, type: 2}
+  - {fileID: 11400000, guid: 9cdbd6fdfd487794ca606e20ea47e5e5, type: 2}
+  - {fileID: 11400000, guid: 4a9774385bd674843bc4c439ceffbd60, type: 2}
+  - {fileID: 11400000, guid: 8a56a225410af4749aba635e7a85e95b, type: 2}
+  - {fileID: 11400000, guid: 9691b26c7fdc2c94482a7fb1075fe7a6, type: 2}
+  - {fileID: 11400000, guid: 0601f86a981aef0478ee3c20fb93a4fa, type: 2}
+  - {fileID: 11400000, guid: 62543b97072039a4a85e42323727614b, type: 2}
+  - {fileID: 11400000, guid: b499e84b7d253234c9368dfebd290cb3, type: 2}
+  - {fileID: 11400000, guid: 0953345b266463f48ad4ff760eb5180a, type: 2}
+  - {fileID: 11400000, guid: 2fc89c53eaa6e4f449786db11373722c, type: 2}
 --- !u!4 &970983281
 Transform:
   m_ObjectHideFlags: 0
