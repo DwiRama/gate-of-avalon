@@ -6,10 +6,14 @@ public class CardBin : MonoBehaviour {
     public List<GameObject> cardGos;
     public List<Card> cards;
     
-    public void AddToBin(int index)
+    public void AddToBin(int index, bool zeroOutPos = false)
     {
         cardGos[index].transform.SetParent(this.transform);
-        //cardGos[index].transform.localPosition = Vector3.zero;
+
+        if (zeroOutPos)
+        {
+            cardGos[index].transform.localPosition = Vector3.zero;
+        }
 
         CardController cardController = cardGos[index].GetComponent<CardController>();
         cardController.enabled = true;

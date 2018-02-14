@@ -250,7 +250,7 @@ public class Hand : MonoBehaviour {
 
         if (throwToBin)
         {            
-            ThrowToBin();
+            ThrowToBin(false,true);
         }
         
         if (selectedIndex >= cards.Count - 1)
@@ -264,7 +264,7 @@ public class Hand : MonoBehaviour {
         yield return null;
     }
     
-    public void ThrowToBin(bool getThorwn = false)
+    public void ThrowToBin(bool getThorwn = false, bool zeroOutPos = false, bool show = false)
     {
         if (cards.Count > 0)
         {
@@ -274,26 +274,55 @@ public class Hand : MonoBehaviour {
             cards.RemoveAt(selectedIndex);
             cardGOs.RemoveAt(selectedIndex);
 
-            cardBin.AddToBin(cardBin.cards.Count - 1);
+            if (show)
+            {
+                StartCoroutine(ShowBeforeThrow(cardBin.cardGos[cardBin.cardGos.Count - 1].GetComponent<CardController>()));
+            }
+            else
+            {
+                if (zeroOutPos)
+                {
+                    cardBin.AddToBin(cardBin.cards.Count - 1, true);
+                }
+                else
+                {
+                    cardBin.AddToBin(cardBin.cards.Count - 1);
+                }
+            }
 
             if (getThorwn)
             {
-                GameMaster.gm.selector.UnHighLight();
+                //GameMaster.gm.selector.UnHighLight();
                 GameMaster.gm.selector.RemoveSelector();
 
-                if (selectedIndex >= cards.Count - 1)
-                {
-                    selectedIndex = cards.Count - 1;
-                }
+                //if (selectedIndex >= cards.Count - 1)
+                //{
+                //    selectedIndex = cards.Count - 1;
+                //}
                 RearrangeCard();
 
-                selectedIndex = 0;
-                SpriteRenderer currSpRen = cardGOs[selectedIndex].GetComponent<CardController>().cardGFX;
-                SpriteRenderer currSpRenBack = cardGOs[selectedIndex].GetComponent<CardController>().cardGFXBack;
+                handOppo.selectedIndex = 0;
+                SpriteRenderer currSpRen = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFX;
+                SpriteRenderer currSpRenBack = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFXBack;
                 GameMaster.gm.selector.SetSelector(handOppo.cardPos[0], SelectorPosition.Hand);
                 GameMaster.gm.selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
             }
         }
+    }
+
+    IEnumerator ShowBeforeThrow(CardController cc)
+    {
+        cc.cardGFX.sortingLayerName = "Show";
+        cc.cardGFX.sortingOrder = 1;
+        cc.cardGFXBack.sortingLayerName = "Show";
+        cc.cardGFXBack.sortingOrder = 1;
+
+        cc.ShowCard();
+
+        yield return new WaitForSeconds(1.5f);
+
+        cardBin.AddToBin(cardBin.cards.Count - 1, true);
+        yield return null;
     }
 
     public void RearrangeCard()

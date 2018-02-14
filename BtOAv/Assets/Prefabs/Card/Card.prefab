@@ -219,7 +219,7 @@ MonoBehaviour:
   cardAnimator: {fileID: 95868969757312204}
   sfx: {fileID: 82230075699124306}
   targetPos: {x: 0, y: 0, z: 0}
-  speed: 8
+  speed: 8.2
   moving: 0
 --- !u!212 &212397800751254070
 SpriteRenderer:

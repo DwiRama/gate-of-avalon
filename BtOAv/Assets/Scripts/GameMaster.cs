@@ -210,7 +210,7 @@ public class GameMaster : MonoBehaviour {
                         {
                             if (Input.GetKeyDown(KeyCode.Return))
                             {
-                                handOppo.ThrowToBin(true);
+                                handOppo.ThrowToBin(true,true,true);
                             }
 
                             if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -263,12 +263,28 @@ public class GameMaster : MonoBehaviour {
                         bool found = false;
                         int pointInterval = boardOppo.totalPoint - board.totalPoint;
 
+                        //Revive Card
+                        if (currBolted == handOppo.dropZone)
+                        {
+                            Debug.Log("Revive check");
+                            for (int i = 0; i < handOppo.cards.Count; i++)
+                            {
+                                if (handOppo.cards[i].cardType == CardType.revive)
+                                {
+                                    Debug.Log("Revive");
+                                    handOppo.selectedIndex = i;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+
                         //Find Higher Point
                         if (!found)
                         {
                             for (int i = 0; i < handOppo.cards.Count; i++)
                             {
-                                if (handOppo.cards[i].cardValue + pointInterval > 0)
+                                if (handOppo.cards[i].cardValue + pointInterval > 0 && (handOppo.cards[i].cardId >= 0 && handOppo.cards[i].cardId < 7))
                                 {
                                     handOppo.selectedIndex = i;
                                     found = true;
@@ -282,7 +298,7 @@ public class GameMaster : MonoBehaviour {
                         {
                             for (int i = 0; i < handOppo.cards.Count; i++)
                             {
-                                if (handOppo.cards[i].cardValue + pointInterval >= 0)
+                                if (handOppo.cards[i].cardValue + pointInterval >= 0 && (handOppo.cards[i].cardId >= 0 && handOppo.cards[i].cardId < 7))
                                 {
                                     handOppo.selectedIndex = i;
                                     found = true;
