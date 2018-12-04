@@ -105,6 +105,10 @@ public class Hand : MonoBehaviour {
                     revive = true;
                     GameMaster.gm.currBolted = null;
                 }
+                else if (cards[selectedIndex].cardType == CardType.blast)
+                {
+                    //Do nothing
+                }
                 else
                 {
                     dropZone.AddCardToBin(dropZone.cardGos.Count - 1, false);
@@ -115,7 +119,7 @@ public class Hand : MonoBehaviour {
 
             if (revive)
             {
-                StartCoroutine(ShowCardAnimation(1f, true, CardType.revive));
+                StartCoroutine(ShowCardEffect(1f, true, CardType.revive));
             }
             else if (cards[selectedIndex].cardType == CardType.normal || cards[selectedIndex].cardId == 0)
             {
@@ -153,15 +157,15 @@ public class Hand : MonoBehaviour {
             }
             else if (cards[selectedIndex].cardType == CardType.mirror)
             {
-                ThrowToBin();
+                StartCoroutine(ShowCardEffect(1f, true, CardType.mirror));
             }
             else if (cards[selectedIndex].cardType == CardType.bolt)
             {
-                StartCoroutine(ShowCardAnimation(1f, true, CardType.bolt));
+                StartCoroutine(ShowCardEffect(1f, true, CardType.bolt));
             }
             else if (cards[selectedIndex].cardType == CardType.blast)
             {
-                StartCoroutine(ShowCardAnimation(1f, true, CardType.blast));
+                StartCoroutine(ShowCardEffect(1f, true, CardType.blast));
             }
             
             if (!backToDeck)
@@ -184,9 +188,9 @@ public class Hand : MonoBehaviour {
         }
     }
     
-    IEnumerator ShowCardAnimation(float wait, bool throwToBin, CardType cardType)
+    IEnumerator ShowCardEffect(float wait, bool throwToBin, CardType cardType)
     {
-        GameMaster.gm.isShowEffect = true;
+        GameMaster.gm.isShowingEffect = true;
         CardController cc = cardGOs[selectedIndex].GetComponent<CardController>();
 
         yield return new WaitForSeconds(0.05f);
@@ -240,9 +244,38 @@ public class Hand : MonoBehaviour {
                     handOppo.selectedIndex = 0;
                     SpriteRenderer currSpRen = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFX;
                     SpriteRenderer currSpRenBack = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFXBack;
-                    GameMaster.gm.selector.SetSelector(handOppo.cardPos[0], SelectorPosition.Enemy);
-                    GameMaster.gm.selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
+                    if (!GameMaster.gm.blastOppo)
+                    {                        
+                        GameMaster.gm.selector.SetSelector(handOppo.cardPos[0], SelectorPosition.Enemy);
+                        GameMaster.gm.selector.HighLight(currSpRen, currSpRenBack, currSpRen.sortingOrder, false);
+                    } 
                 }
+                break;
+            case CardType.mirror:
+
+                //Showing Effect...//
+                Debug.Log("Show Effects");
+
+                yield return new WaitForSeconds(wait);
+
+                //Swap cards on board
+                List<GameObject> tempCardGos = new List<GameObject>();
+                tempCardGos = dropZone.cardGos;
+                dropZone.cardGos = dropZoneOppo.cardGos;
+                dropZoneOppo.cardGos = tempCardGos;
+
+                //Set card's parent
+                dropZone.RearrangeCards(0.1f);
+                dropZoneOppo.RearrangeCards(0.1f);
+
+                //Change Total Point
+                int tempPoint = dropZone.totalPoint;
+                dropZone.totalPoint = dropZoneOppo.totalPoint;
+                dropZoneOppo.totalPoint = tempPoint;
+
+                //Change totalPoint UIs
+                dropZone.ChangePoint(true);
+                dropZoneOppo.ChangePoint(true);
                 break;
         }
         
@@ -260,11 +293,11 @@ public class Hand : MonoBehaviour {
 
         RearrangeCard();
 
-        GameMaster.gm.isShowEffect = false;
+        GameMaster.gm.isShowingEffect = false;
         yield return null;
     }
     
-    public void ThrowToBin(bool getThorwn = false, bool zeroOutPos = false, bool show = false)
+    public void ThrowToBin(bool getThorwn = false, bool zeroOutPos = false, bool show = false, bool setSelector = false)
     {
         if (cards.Count > 0)
         {
@@ -299,8 +332,11 @@ public class Hand : MonoBehaviour {
                 //{
                 //    selectedIndex = cards.Count - 1;
                 //}
-                RearrangeCard();
+                RearrangeCard();                
+            }
 
+            if (setSelector)
+            {
                 handOppo.selectedIndex = 0;
                 SpriteRenderer currSpRen = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFX;
                 SpriteRenderer currSpRenBack = handOppo.cardGOs[handOppo.selectedIndex].GetComponent<CardController>().cardGFXBack;

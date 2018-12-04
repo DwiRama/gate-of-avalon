@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameMaster : MonoBehaviour {
     public static GameMaster gm;
@@ -19,10 +20,13 @@ public class GameMaster : MonoBehaviour {
     public Hand handOppo;
     public SelectorController selectorOppo;
     public BoardDropzoneController boardOppo;
+    public bool blastOppo = false;
     [Space(5)]
 
+    [Header("Others")]
     public GameObject cardPrefab;
     public BoardDropzoneController currBolted = null;
+    public bool rearrangeBoard = false;
 
     public Image message;
     public Sprite messageWin;
@@ -37,7 +41,7 @@ public class GameMaster : MonoBehaviour {
     public bool isDrawing = false;
     public bool isFliping = false;
     public bool isArranging = false;
-    public bool isShowEffect = false;
+    public bool isShowingEffect = false;
 
     public bool checkPoints = false;
     public bool firstCheck = false;
@@ -48,7 +52,11 @@ public class GameMaster : MonoBehaviour {
 
     public bool roundStart = true;
     public bool roundFinish = false;
-    
+
+    public float restartTime = 2;
+    public bool restart = false;
+    float restartTimer = 0;
+
     float timer;
     bool drawn10 = false;
 
@@ -61,14 +69,14 @@ public class GameMaster : MonoBehaviour {
         gm = this;
     }
 
-	void Start ()
+    void Start()
     {
         timer = actionDelay;
         ActionOn(0.5f);
         roundStart = true;
         //handOppo.SortCards();
     }
-    
+
     public void SortHand()
     {
         hand.SortCards();
@@ -102,6 +110,14 @@ public class GameMaster : MonoBehaviour {
 
     void Update()
     {
+        if (restart) {
+            if (restartTimer <= 0) {
+                SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+            } else {
+                restartTimer -= Time.deltaTime;
+            }
+            return;
+        }
         if (!stop)
         {
             if (!canMove)
@@ -147,14 +163,14 @@ public class GameMaster : MonoBehaviour {
                 arrange = false;
             }
 
-            if (!isCheckingPoint && !isArranging && !isFliping && !isDrawing && !isShowEffect && canMove)
+            if (!isCheckingPoint && !isArranging && !isFliping && !isDrawing && !isShowingEffect && canMove)
             {
                 if (!board.changePoint && !boardOppo.changePoint && checkPoints)
                 {
                     isCheckingPoint = true;
                     CheckPoints(firstCheck);
                 }
-                else if (!board.changePoint && !boardOppo.changePoint && !checkPoints && !roundFinish)
+                else if (!board.changePoint && !boardOppo.changePoint && !checkPoints && !roundFinish && !rearrangeBoard)
                 {
                     if (Input.GetKeyDown(KeyCode.Z) && !drawn10)
                     {
@@ -210,7 +226,7 @@ public class GameMaster : MonoBehaviour {
                         {
                             if (Input.GetKeyDown(KeyCode.Return))
                             {
-                                handOppo.ThrowToBin(true,true,true);
+                                handOppo.ThrowToBin(true, true, true, true);
                             }
 
                             if (Input.GetKeyDown(KeyCode.RightArrow))
@@ -257,11 +273,24 @@ public class GameMaster : MonoBehaviour {
                             }
                         }
                     }
-                    else
+                    else //Opponent Turn
                     {
                         //Opponent Choice
                         bool found = false;
                         int pointInterval = boardOppo.totalPoint - board.totalPoint;
+
+                        if (blastOppo) //Opponent Randomly choose player's card to discard
+                        {
+                            if (hand.cards.Count > 0)
+                            {
+                                hand.selectedIndex = Random.Range(0, hand.cards.Count);
+                                hand.ThrowToBin(true, true, true);
+                                Debug.Log("throw");
+                            }
+                            blastOppo = false;
+                            ActionOn(actionDelay + 4);
+                            return;
+                        }
 
                         //Revive Card
                         if (currBolted == handOppo.dropZone)
@@ -307,6 +336,20 @@ public class GameMaster : MonoBehaviour {
                             }
                         }
 
+                        //Find Blast Card
+                        if (!found && handOppo.cards.Count > 0 && handOppo.cards.Count < 3)
+                        {
+                            for (int i = 0; i < handOppo.cards.Count; i++)
+                            {
+                                if (handOppo.cards[i].cardType == CardType.blast)
+                                {
+                                    handOppo.selectedIndex = i;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+
                         //Find Force Card
                         if (!found)
                         {
@@ -338,17 +381,45 @@ public class GameMaster : MonoBehaviour {
                             }
                         }
 
+                        //Find Mirror Card
+                        if (!found)
+                        {
+                            for (int i = 0; i < handOppo.cards.Count; i++)
+                            {
+                                if (handOppo.cards[i].cardType == CardType.mirror)
+                                {
+                                    handOppo.selectedIndex = i;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+
                         if (found)
                         {
-                            handOppo.PlaceCard(true);
+                            if (handOppo.cards[handOppo.selectedIndex].cardType == CardType.blast)
+                            {
+                                blastOppo = true;
+                                handOppo.PlaceCard(true);
+                            }
+                            else
+                            {
+                                handOppo.PlaceCard(true);
+                            }
                             ActionOn(actionDelay);
                         }
                         else
                         {
-                            //Surrender                    
+                            //Surrender
+                            GameOver(true);
                         }
-                        firstCheck = false;
-                        checkPoints = true;
+
+                        if (!blastOppo || handOppo.cards.Count < 0) // fix
+                        {
+                            firstCheck = false;
+                            checkPoints = true;
+                        }
+
                     }
 
                     if (Input.GetKeyDown(KeyCode.V))
@@ -468,14 +539,7 @@ public class GameMaster : MonoBehaviour {
                 }
                 else
                 {
-                    handOppo.OpenCX();
-                    roundFinish = true;
-
-                    message.sprite = messageLose;
-                    message.enabled = true;
-                    messageAnimator.enabled = true;
-                    messageAnimator.Play("Show", 0, -1f);
-                    //Debug.Log("You Lose");
+                    GameOver(false);
                 }
             } else
             {
@@ -502,19 +566,32 @@ public class GameMaster : MonoBehaviour {
                 }
                 else
                 {
-                    handOppo.OpenCX();
-                    roundFinish = true;
-
-                    message.sprite = messageWin;
-                    message.enabled = true;
-                    messageAnimator.enabled = true;
-                    messageAnimator.Play("Show", 0, -1f);
-                    //Debug.Log("You Won");
+                    GameOver(true);
                 }
             }
         }
         checkPoints = false;
         isCheckingPoint = false;
+    }
+
+    public void GameOver(bool win)
+    {
+        handOppo.OpenCX();
+        roundFinish = true;
+
+        if (win)
+        {
+            message.sprite = messageWin;
+        }
+        else
+        {
+            message.sprite = messageLose;
+        }
+        message.enabled = true;
+        messageAnimator.enabled = true;
+        messageAnimator.Play("Show", 0, -1f);
+        restartTimer = restartTime;
+        restart = true;
     }
 
     public void ClearBoard()
@@ -553,7 +630,7 @@ public class GameMaster : MonoBehaviour {
         RenderCards(cardInfo, newCard);
     }
 
-    public void RenderCards(Card cardInfo,GameObject cardGO)
+    public void RenderCards(Card cardInfo, GameObject cardGO)
     {
         CardController newCardController = cardGO.GetComponent<CardController>();
 

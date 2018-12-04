@@ -94,8 +94,13 @@ public class BoardDropzoneController : MonoBehaviour {
         //Debug.Log("Total Value: " + totalPoint);
     }
 
-    public void ChangePoint()
+    public void ChangePoint(bool resetCurrTotalPoint = false)
     {
+        if (resetCurrTotalPoint)
+        {
+            currTotalPoint = 0;
+            increasePoint = true;
+        }
         changePointTimer = changeDelay;
         changePoint = true;
     }
@@ -131,10 +136,37 @@ public class BoardDropzoneController : MonoBehaviour {
         for (int i = cardGos.Count - 1; i >= 0; i--)
         {
             AddCardToBin(i);
-            totalPoint = 0;
-            currTotalPoint = 0;
-            totalPointText.text = "0";
         }
+        totalPoint = 0;
+        currTotalPoint = 0;
+        currBoltCard = null;
+        totalPointText.text = "0";
+    }
+
+    public void RearrangeCards(float delay = 0)
+    {
+        GameMaster.gm.rearrangeBoard = true;
+        StartCoroutine(RearrangeCard(delay));
+    }
+
+    private IEnumerator RearrangeCard(float delay = 0)
+    {
+        WaitForSeconds duration = new WaitForSeconds(delay);
+        CardController cardController = new CardController();
+
+        for (int i = 0; i < cardGos.Count; i++)
+        {
+            GameObject card = cardGos[i];
+            cardController = card.GetComponent<CardController>();
+            card.transform.SetParent(transform);
+            cardController.enabled = true;
+            cardController.targetPos = new Vector3(i * 0.6f, 0, 0);
+            cardController.moving = true;
+            yield return duration;
+        }
+
+        GameMaster.gm.rearrangeBoard = false;
+        yield return null;
     }
 
     void Update()
