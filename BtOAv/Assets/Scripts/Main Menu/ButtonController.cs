@@ -10,6 +10,7 @@ public class ButtonController : MonoBehaviour {
     public AudioSource slideAudio;
 
     private Vector3 originalButtonSize;
+    private int originalSiblingPosition;
 
     public void MoveToScene()
     {
@@ -29,11 +30,15 @@ public class ButtonController : MonoBehaviour {
         {
             slideAudio.Play();
         }
+
+        buttonMoveToFront();
     }
 
     public void zoomOutButton()
     {
         transform.localScale = originalButtonSize;
+
+        buttonBackToPosition();
     }
 
 
@@ -47,5 +52,16 @@ public class ButtonController : MonoBehaviour {
     {
         yield return new WaitForSeconds(gameObject.GetComponent<AudioSource>().clip.length);
         SceneManager.LoadScene(sceneName);
+    }
+
+    void buttonMoveToFront()
+    {
+        originalSiblingPosition = transform.GetSiblingIndex();
+        transform.SetSiblingIndex(3);
+    }
+
+    void buttonBackToPosition()
+    {
+        transform.SetSiblingIndex(originalSiblingPosition);
     }
 }
