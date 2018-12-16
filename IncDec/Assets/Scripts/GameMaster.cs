@@ -114,7 +114,8 @@ public class GameMaster : MonoBehaviour {
         if (restart) {
             if (restartTimer <= 0) {
                 fadeAnimator.SetBool("fade", true);
-                SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+                //SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+                SceneManager.LoadSceneAsync("MainMenu");
             } else {
                 restartTimer -= Time.deltaTime;
             }

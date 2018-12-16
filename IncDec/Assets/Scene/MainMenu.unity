@@ -215,7 +215,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: b74c648793db97647b86a8e1a44aafe5, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 2ab85610273346e499d0910351d6bb1d, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.2
   m_Pitch: 1
@@ -393,11 +393,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 243514530}
-        m_MethodName: 
+        m_MethodName: MoveToScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -450,10 +450,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0b544a0b5a946340bd79be69de68caf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneName: 
+  sceneName: Help
   zoomButtonSize: 1.1
   slideAudio: {fileID: 243514532}
-  fadingAnimator: {fileID: 0}
+  fadingAnimator: {fileID: 915429468}
 --- !u!114 &243514531
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -946,7 +946,7 @@ MonoBehaviour:
   sceneName: 
   zoomButtonSize: 1.1
   slideAudio: {fileID: 1352621765}
-  fadingAnimator: {fileID: 0}
+  fadingAnimator: {fileID: 915429468}
 --- !u!114 &1352621764
 MonoBehaviour:
   m_ObjectHideFlags: 0
