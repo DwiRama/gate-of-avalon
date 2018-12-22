@@ -9919,6 +9919,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 2053544418}
+  - {fileID: 2112406524}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9940,46 +9941,120 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogs:
   - name: Game Rules
-    text:
-    - The objective of the game is having bigger sum of numbered cards againts opponent.
-    - 'Game Flow:'
-    - Draw 10 cards at the beginning.
-    - To start a round take 1 Card from Deck to the Board.
-    - Player that have the smaller number will go first.
-    - Place a Card from Hand to the Board.
-    - If you have the higher opponent, switch turn.
-    - If you can't surpass your Opponent's sum or you ran out of Cards, you lose.
-    - If the sum is the same, the board is cleared and each player start draw 1 Card
-      from the deck to the board again.
+    dialogText:
+    - text: 'Objetive:
+
+        Having bigger sum of numbered Cards againts Opponent.'
+      sprite: {fileID: 0}
+      width: 0
+      height: 0
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 0}
+    - text: ~Game Flow~
+      sprite: {fileID: 0}
+      width: 0
+      height: 0
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 0}
+    - text: Draw 10 cards at the beginning.
+      sprite: {fileID: 0}
+      width: 0
+      height: 0
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 0}
+    - text: To start a round take one Card from Deck to the Board.
+      sprite: {fileID: 0}
+      width: 0
+      height: 0
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 0}
+    - text: Player that have the smaller number will go first.
+      sprite: {fileID: 0}
+      width: 0
+      height: 0
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 0}
+    - text: Place a Card from hand to the Board.
+      sprite: {fileID: 0}
+      width: 0
+      height: 0
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 0}
+    - text: If you have the higher sum than the Opponent, switch turn.
+      sprite: {fileID: 0}
+      width: 0
+      height: 0
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 0}
+    - text: If you can't surpass your Opponents sum or you ran out of cards, you lose.
+      sprite: {fileID: 0}
+      width: 0
+      height: 0
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 0}
   - name: Cards
-    text:
-    - ~About Cards~
-    - 'Numbered Card:
+    dialogText:
+    - text: 'Numbered Card:
 
-      A card with a number from 1 to 7.'
-    - 'Bolt Card:
+        A card with a numer from 1 to 7.'
+      sprite: {fileID: 21300000, guid: 3458a75cf9d8d5846b086cee440b7275, type: 3}
+      width: 400
+      height: 400
+      textboxPos: {x: 0, y: 120}
+      imagePos: {x: 0, y: 50}
+    - text: 'Bolt Card:
 
-      A card that can disable the last card opponent placed.'
-    - 'Special case:
+        A card that can disable the last card opponent place.'
+      sprite: {fileID: 21300000, guid: 00083c335bc7cd74080456bba5ac2bcf, type: 3}
+      width: 170
+      height: 170
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 50}
+    - text: You can use numbered card "1" to revive the disable card.
+      sprite: {fileID: 0}
+      width: 170
+      height: 170
+      textboxPos: {x: 0, y: 250}
+      imagePos: {x: 0, y: 50}
+    - text: 'Mirror Card:
 
-      You can use numbered card "1" to revive the disable card.'
-    - 'Mirror Card:
+        All Cards in the board will be reversed.'
+      sprite: {fileID: 21300000, guid: 55544ee75d9624743902db04bcd0cb34, type: 3}
+      width: 170
+      height: 170
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 50}
+    - text: 'Blast Card:
 
-      All Cards in the Board will be reversed.'
-    - 'Blast Card:
+        Pick one Card from opponent''s hand and discard it.'
+      sprite: {fileID: 21300000, guid: 64a0a52918970394f9232c23f8d6b617, type: 3}
+      width: 170
+      height: 170
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 50}
+    - text: 'Force Card:
 
-      Pick one Card from Opponent''s Hand and discard it.'
-    - 'Force Card:
-
-      Doubles the value of your sum.'
-    - The Special cards(Bolt, Mirror, Blast, and Force) have the value of 1.
+        Doubles the value of your sum.'
+      sprite: {fileID: 21300000, guid: 0528f458dabc1b649b50d587b672bc84, type: 3}
+      width: 170
+      height: 170
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 50}
+    - text: The Special Cards (Bolt Mirror, Blast, and Force) have value of 1.
+      sprite: {fileID: 21300000, guid: cc78fe45caf57814e98d77c01c050eea, type: 3}
+      width: 500
+      height: 400
+      textboxPos: {x: 0, y: 170}
+      imagePos: {x: 0, y: 50}
   textboxTransform: {fileID: 2053544418}
   textboxAnimator: {fileID: 2053544421}
   textBox: {fileID: 1763288204}
-  typeDelay: 0.03
+  typeDelay: 0.01
   typeAudioSoure: {fileID: 1071054713}
   typeAudio: {fileID: 8300000, guid: 6738d02b7e06e6744a651776a1138abd, type: 3}
   startDialog: 0
+  image: {fileID: 2112406526}
+  imageAnimator: {fileID: 2112406525}
   OnClose:
     m_PersistentCalls:
       m_Calls:
@@ -10831,9 +10906,9 @@ RectTransform:
   m_Father: {fileID: 1071054710}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -100}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: 0, y: 109}
   m_SizeDelta: {x: 500, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2053544419
@@ -10888,6 +10963,94 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1 &2112406523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2112406524}
+  - component: {fileID: 2112406527}
+  - component: {fileID: 2112406526}
+  - component: {fileID: 2112406525}
+  m_Layer: 5
+  m_Name: Image
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &2112406524
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2112406523}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1071054710}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 50}
+  m_SizeDelta: {x: 600, y: 400}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!95 &2112406525
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2112406523}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d8f55c96569c13c49aba3783e921d08b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2112406526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2112406523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 21300000, guid: cc78fe45caf57814e98d77c01c050eea, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+--- !u!222 &2112406527
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2112406523}
+  m_CullTransparentMesh: 0
 --- !u!1 &2146506638
 GameObject:
   m_ObjectHideFlags: 0

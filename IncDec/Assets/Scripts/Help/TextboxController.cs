@@ -8,8 +8,20 @@ using UnityEngine.Events;
 public class Dialog
 {
     public string name = "Dialog";
-    [TextArea(2,4)]
-    public List<string> text;    
+    public List<DialogText> dialogText;
+}
+
+[System.Serializable]
+public class DialogText
+{
+    [TextArea(2, 4)]
+    public string text;
+    public Sprite sprite;
+    public float width = 300;
+    public float height = 300;
+
+    public Vector2 textboxPos;
+    public Vector2 imagePos;
 }
 
 public class TextboxController : MonoBehaviour {
@@ -22,12 +34,17 @@ public class TextboxController : MonoBehaviour {
     public AudioSource typeAudioSoure;
     public AudioClip typeAudio;
     public bool startDialog = false;
+
+    public Image image;
+    public Animator imageAnimator;
+
     public UnityEvent OnClose;
 
     Dialog currentDialog;
     int dialogTextsIndex;
     bool isTyping;
     bool nextText = true;
+    bool isTransitioning;
 
 	// Use this for initialization
 	void Start () {
@@ -40,7 +57,7 @@ public class TextboxController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (startDialog) {
+        if (startDialog && !isTransitioning) {
             if (!isTyping)
             {
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Mouse0))
@@ -48,7 +65,7 @@ public class TextboxController : MonoBehaviour {
                     if (nextText)
                     {
                         isTyping = true;
-                        StartText();
+                        StartCoroutine(StartingText());
                     } else if (!nextText)
                     {
                         HideDialog();
@@ -60,10 +77,10 @@ public class TextboxController : MonoBehaviour {
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     StopAllCoroutines();
-                    textBox.text = currentDialog.text[dialogTextsIndex];
+                    textBox.text = currentDialog.dialogText[dialogTextsIndex].text;
 
                     dialogTextsIndex++;
-                    if (dialogTextsIndex < currentDialog.text.Count)
+                    if (dialogTextsIndex < currentDialog.dialogText.Count)
                     {
                         nextText = true;
                     }
@@ -80,24 +97,51 @@ public class TextboxController : MonoBehaviour {
         currentDialog = dialog;
         dialogTextsIndex = 0;
         textboxTransform.gameObject.SetActive(true);
+        image.gameObject.SetActive(true);
         textboxAnimator.SetBool("Show", true);
         StartText();
     }
 
     public void StartText()
     {
+        DialogText dialogText = currentDialog.dialogText[dialogTextsIndex];
+
+        if (currentDialog.dialogText[dialogTextsIndex].sprite != null)
+        {
+            image.sprite = dialogText.sprite;
+            image.rectTransform.sizeDelta = new Vector2(dialogText.width, dialogText.height);
+            image.rectTransform.anchoredPosition = dialogText.imagePos;
+            imageAnimator.SetBool("Show", true);
+        }
+
+        textboxTransform.anchoredPosition = dialogText.textboxPos;
         textBox.text = "";
-        StartCoroutine(TypingText(currentDialog.text[dialogTextsIndex], 0));
+        textboxAnimator.SetBool("Show", true);
+        StartCoroutine(TypingText(dialogText.text, 0, .5f));
     }
 
     public void HideDialog()
     {
+        isTransitioning = true;
         textboxAnimator.SetBool("Show", false);
+        imageAnimator.SetBool("Show", false);
         StartCoroutine(HidingDialog(1.2f));
     }
 
-    IEnumerator TypingText(string text, int index)
+    IEnumerator StartingText()
     {
+        isTransitioning = true;
+        textboxAnimator.SetBool("Show", false);
+        imageAnimator.SetBool("Show", false);
+        yield return new WaitForSeconds(1.2f);
+        StartText();
+        isTransitioning = false;
+        yield return null;
+    }
+
+    IEnumerator TypingText(string text, int index, float delay = 0)
+    {
+        yield return new WaitForSeconds(delay);
         if (index < text.Length)
         {
             nextText = false;
@@ -110,7 +154,7 @@ public class TextboxController : MonoBehaviour {
         } else
         {
             dialogTextsIndex++;
-            if (dialogTextsIndex < currentDialog.text.Count)
+            if (dialogTextsIndex < currentDialog.dialogText.Count)
             {
                 nextText = true;
             }
@@ -125,6 +169,8 @@ public class TextboxController : MonoBehaviour {
         yield return new WaitForSeconds(delay);
         startDialog = false;
         textboxTransform.gameObject.SetActive(false);
+        image.gameObject.SetActive(false);
         OnClose.Invoke();
+        isTransitioning = false;
     }
 }
